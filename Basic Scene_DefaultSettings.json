@@ -1,0 +1,26 @@
+{
+    "value0": 3,
+    "value1": 2,
+    "value2": 1,
+    "value3": 0,
+    "value4": 2,
+    "value5": 0,
+    "value6": {
+        "value0": "Testsssssssssssssssssadcassssssssssssssssss"
+    },
+    "value7": 1,
+    "value8": {
+        "value0": "Test2"
+    },
+    "value9": 2,
+    "value10": 0,
+    "value11": {
+        "value0": 35633,
+        "value1": "vertexshader"
+    },
+    "value12": 2,
+    "value13": {
+        "value0": 35633,
+        "value1": "vertexshader-two"
+    }
+}

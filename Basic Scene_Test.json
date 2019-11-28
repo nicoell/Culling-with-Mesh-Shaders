@@ -1,0 +1,22 @@
+{
+    "value0": 2,
+    "value1": 0,
+    "value2": {
+        "value0": "Seco"
+    },
+    "value3": 1,
+    "value4": {
+        "value0": "NewSo"
+    },
+    "value5": 2,
+    "value6": 0,
+    "value7": {
+        "value0": 35633,
+        "value1": "vertexshader"
+    },
+    "value8": 2,
+    "value9": {
+        "value0": 35633,
+        "value1": "vertexshader-two"
+    }
+}

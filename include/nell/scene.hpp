@@ -15,7 +15,7 @@ class Scene final
 
   void setTime(double);
   void setDeltaTime(double);
-  std::string serialize();
+  std::string serialize() const;
   void deserialize(const std::string &archive = std::string());
   void update();
   void render();

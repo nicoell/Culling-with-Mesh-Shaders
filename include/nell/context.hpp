@@ -18,8 +18,7 @@
 #include <spdlog/spdlog.h>
 #include <basic_scene.hpp>
 #include <map>
-#include <utils/glfw_utils.hpp>
-#include "scene.hpp"
+#include <nell/scene.hpp>
 
 namespace nell
 {

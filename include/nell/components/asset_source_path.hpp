@@ -16,7 +16,7 @@ void serialize(Archive &archive, AssetSourcePath &asset_source_path)
   archive(asset_source_path.path);
 }
 
-inline void drawComponentUi(AssetSourcePath &asset_source_path)
+inline void drawComponentImpl(AssetSourcePath &asset_source_path)
 {
   ImGui::InputText("Source Path", &asset_source_path.path);
   //ImGui::Text(asset_source_path.path.data());

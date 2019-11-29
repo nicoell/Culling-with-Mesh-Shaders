@@ -1,9 +1,10 @@
 #include <cereal/archives/json.hpp>
+#include <nell/components/mesh.hpp>
+#include <nell/components/shaders.hpp>
 #include <nell/scene.hpp>
+#include <nell/systems/asset_import_system.hpp>
+#include <nell/systems/ui_entity_draw_system.hpp>
 #include <utility>
-#include "asset_import_system.hpp"
-#include "shader_source.hpp"
-#include "ui_entity_draw_system.hpp"
 
 namespace nell
 {
@@ -24,12 +25,11 @@ Scene::Scene(std::string scene_name, SceneDefinitionFunction &scene_definition)
   init();
 }
 
-
 void Scene::setTime(const double time) { _time = time; }
 
 void Scene::setDeltaTime(const double delta_time) { _delta_time = delta_time; }
 
-std::string Scene::serialize()
+std::string Scene::serialize() const
 {
   std::stringstream out_stream;
   {
@@ -37,7 +37,7 @@ std::string Scene::serialize()
     cereal::JSONOutputArchive out_archive{out_stream};
     _registry.snapshot()
         .entities(out_archive)
-        .component<AssetSourcePath, ShaderSource>(out_archive);
+        .component<AssetSourcePath, Shaders>(out_archive);
   }
   return out_stream.str();
 }
@@ -50,7 +50,7 @@ void Scene::deserialize(const std::string &archive)
 
   _registry.loader()
       .entities(in_archive)
-      .component<AssetSourcePath, ShaderSource>(in_archive);
+      .component<AssetSourcePath, Shaders>(in_archive);
 
   init();
 }
@@ -58,7 +58,7 @@ void Scene::deserialize(const std::string &archive)
 void Scene::update()
 {
   spdlog::debug("Update");
-  updateEntityUi<AssetSourcePath, ShaderSource>(_registry);
+  drawEntityBrowser<AssetSourcePath, Model, Shaders>(_registry);
 }
 void Scene::render() { spdlog::debug("Render"); }
 std::string Scene::getActiveScene() const { return _scene_name; }

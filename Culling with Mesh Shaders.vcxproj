@@ -146,9 +146,12 @@
     <ClInclude Include="include\imgui\impl\imgui_impl_opengl3.h" />
     <ClInclude Include="include\imgui\misc\imgui_stdlib.h" />
     <ClInclude Include="include\KHR\khrplatform.h" />
+    <ClInclude Include="include\nell\components\child_link.hpp" />
+    <ClInclude Include="include\nell\components\mesh.hpp" />
     <ClInclude Include="include\nell\components\opengl_program.hpp" />
     <ClInclude Include="include\nell\components\asset_source_path.hpp" />
-    <ClInclude Include="include\nell\components\shader_source.hpp" />
+    <ClInclude Include="include\nell\components\shaders.hpp" />
+    <ClInclude Include="include\nell\definitions.hpp" />
     <ClInclude Include="include\nell\scene.hpp" />
     <ClInclude Include="include\nell\context.hpp" />
     <ClInclude Include="include\nell\scenes\basic_scene.hpp" />

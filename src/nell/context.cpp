@@ -1,5 +1,6 @@
 #include <fstream>
 #include <nell/context.hpp>
+#include <nell/definitions.hpp>
 #include <utility>
 
 namespace nell
@@ -116,7 +117,7 @@ void Context::loadScene(
 
 std::string Context::loadSceneArchiveFile(const std::string& archive_filename)
 {
-  const auto file = std::string(archive_filename + ".json");
+  const auto file = std::string(kSettingsPath + archive_filename + ".json");
   std::ifstream archive_ifstream(file);
   if (!archive_ifstream.is_open()) return std::string();
   return std::string{std::istreambuf_iterator{archive_ifstream}, {}};
@@ -124,10 +125,10 @@ std::string Context::loadSceneArchiveFile(const std::string& archive_filename)
 bool Context::saveSceneArchiveFile(const std::string& archive_filename,
                                    const std::string& archive)
 {
-  const auto file = std::string(archive_filename + ".json");
+  const auto file = std::string(kSettingsPath + archive_filename + ".json");
 
   std::ofstream archive_ofstream(file, std::ios::out | std::ios::trunc);
-  if (!archive_ofstream.is_open()) return false; 
+  if (!archive_ofstream.is_open()) return false;
   archive_ofstream.write(archive.data(), archive.size());
   return true;
 }
@@ -155,6 +156,11 @@ void Context::updateUiFrame()
           }
         }
         ImGui::EndMenu();
+      }
+      if (ImGui::MenuItem("Reload Scene", 0, false, _scene.operator bool()))
+      {
+        const auto archive = _scene->serialize();
+        _scene->deserialize(archive);
       }
       if (ImGui::MenuItem("Save Settings", 0, false, _scene.operator bool()))
       {
@@ -209,8 +215,9 @@ void Context::updateUiFrame()
   if (ImGui::BeginPopupModal("Load Settings"))
   {
     static char settings_name[128] = "";
-    ImGui::InputTextWithHint("Settings Name", _scene->getArchiveFileName().c_str(), settings_name,
-                             IM_ARRAYSIZE(settings_name));
+    ImGui::InputTextWithHint("Settings Name",
+                             _scene->getArchiveFileName().c_str(),
+                             settings_name, IM_ARRAYSIZE(settings_name));
     if (ImGui::Button("Load"))
     {
       _scene->setArchiveName(std::string(settings_name));

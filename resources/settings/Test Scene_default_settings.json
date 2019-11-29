@@ -1,0 +1,52 @@
+{
+    "value0": 3,
+    "value1": 2,
+    "value2": 1,
+    "value3": 0,
+    "value4": 2,
+    "value5": 0,
+    "value6": {
+        "value0": "Armadillo.ply"
+    },
+    "value7": 1,
+    "value8": {
+        "value0": "Test2"
+    },
+    "value9": 2,
+    "value10": 0,
+    "value11": {
+        "value0": [
+            [
+                {
+                    "key": 35632,
+                    "value": "fradersacdascd"
+                },
+                {
+                    "key": 35633,
+                    "value": "vertexshaderasdcascd"
+                }
+            ],
+            [
+                {
+                    "key": 37305,
+                    "value": "computeshader"
+                }
+            ]
+        ]
+    },
+    "value12": 2,
+    "value13": {
+        "value0": [
+            [
+                {
+                    "key": 38233,
+                    "value": "meshshaderf"
+                },
+                {
+                    "key": 38234,
+                    "value": "taskshaderdfvsdvf"
+                }
+            ]
+        ]
+    }
+}

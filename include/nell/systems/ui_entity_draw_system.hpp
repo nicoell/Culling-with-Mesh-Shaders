@@ -6,16 +6,16 @@
 namespace nell
 {
 template <typename Component>
-void updateComponentUi(entt::registry &reg, entt::entity &entity)
+void drawComponent(entt::registry &reg, entt::entity &entity)
 {
   if (auto *comp = reg.try_get<Component>(entity); comp)
   {
-    drawComponentUi(*comp);
+    drawComponentImpl(*comp);
   }
 }
 
 template <typename... Component>
-void updateEntityUi(entt::registry &reg)
+void drawEntityBrowser(entt::registry &reg)
 {
   std::uint64_t dt;
   ImGui::Begin("Entity Browser");
@@ -23,7 +23,7 @@ void updateEntityUi(entt::registry &reg)
     if (ImGui::TreeNode((void *)(intptr_t)entt::to_integer(entity), "Entity %d",
                         entt::to_integer(entity)))
     {
-      (updateComponentUi<Component>(reg, entity), ...);
+      (drawComponent<Component>(reg, entity), ...);
 
       ImGui::TreePop();
     }

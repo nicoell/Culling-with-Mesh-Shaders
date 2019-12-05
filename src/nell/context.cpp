@@ -19,10 +19,15 @@ Context::Context(ContextOptions creation_options)
   glfwInit();
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+  glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
   _window = glfwCreateWindow(_options.window_width, _options.window_height,
                              _options.window_title.c_str(), nullptr, nullptr);
   glfwSetWindowPos(_window, 100, 50);
-  glfwSetWindowSizeCallback(_window, &Context::resizeCallback);
+  glfwSetWindowUserPointer(_window, this);
+  glfwSetWindowSizeCallback(_window, resizeCallback);
+  glfwSetKeyCallback(_window, keyCallback);
+  glfwSetMouseButtonCallback(_window, mouseButtonCallback);
+  glfwSetScrollCallback(_window, scrollCallback);
   glfwMakeContextCurrent(_window);
 
   const auto glad_load_status = gladLoadGL();
@@ -31,6 +36,8 @@ Context::Context(ContextOptions creation_options)
     spdlog::critical("Error on OpenGL load with Glad {0:d}", glad_load_status);
     exit(-1);
   }
+
+  glDebugMessageCallback(logGlDebugMessage, nullptr);
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // Init ImGui
@@ -69,18 +76,16 @@ void Context::run()
     // Update Frame
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     updateUiFrame();
-
     if (_scene)
     {
-      _scene->setTime(time);
-      _scene->setDeltaTime(delta_time);
-      _scene->update();
-      _scene->render();
+      _scene->update(time, delta_time, _input_list);
+      _scene->render(time, delta_time);
     }
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // End Frame
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     endUiFrame();
+    _input_list.clear();
 
     glfwSwapBuffers(_window);
   }
@@ -97,7 +102,102 @@ void Context::glfwErrorCallback(int error, const char* description)
 {
   spdlog::error("glfw Error #{0:d}: {1}", error, description);
 }
-void Context::resizeCallback(GLFWwindow*, int w, int h) {}
+
+void Context::logGlDebugMessage(GLenum source, GLenum type, GLuint id,
+                                GLenum severity, GLsizei length,
+                                const GLchar* message, const void* param)
+{
+  spdlog::level::level_enum loglevel;
+  switch (severity)
+  {
+    case GL_DEBUG_SEVERITY_HIGH:
+      loglevel = spdlog::level::critical;
+      break;
+    case GL_DEBUG_SEVERITY_MEDIUM:
+      loglevel = spdlog::level::err;
+      break;
+    case GL_DEBUG_SEVERITY_LOW:
+      loglevel = spdlog::level::warn;
+      break;
+    default:
+      loglevel = spdlog::level::info;
+      break;
+  }
+
+  spdlog::log(
+      loglevel, "[#{0:d}{1}] {2}; from {3}", id,
+      [&]() -> std::string {
+        switch (type)
+        {
+          case GL_DEBUG_TYPE_ERROR:
+            return "GL_DEBUG_TYPE_ERROR";
+          case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+            return "GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR";
+          case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+            return "GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR";
+          case GL_DEBUG_TYPE_PORTABILITY:
+            return "GL_DEBUG_TYPE_PORTABILITY";
+          case GL_DEBUG_TYPE_PERFORMANCE:
+            return "GL_DEBUG_TYPE_PERFORMANCE";
+          case GL_DEBUG_TYPE_MARKER:
+            return "GL_DEBUG_TYPE_MARKER";
+          case GL_DEBUG_TYPE_PUSH_GROUP:
+            return "GL_DEBUG_TYPE_PUSH_GROUP";
+          case GL_DEBUG_TYPE_POP_GROUP:
+            return "GL_DEBUG_TYPE_POP_GROUP";
+          case GL_DEBUG_TYPE_OTHER:
+            return "GL_DEBUG_TYPE_OTHER";
+
+          default:
+            return std::to_string(type);
+        }
+      }(),
+      message,
+      [&]() -> std::string {
+        switch (source)
+        {
+          case GL_DEBUG_SOURCE_API:
+            return "GL_DEBUG_TYPE_ERROR";
+          case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
+            return "GL_DEBUG_SOURCE_WINDOW_SYSTEM";
+          case GL_DEBUG_SOURCE_THIRD_PARTY:
+            return "GL_DEBUG_SOURCE_THIRD_PARTY";
+          case GL_DEBUG_SOURCE_APPLICATION:
+            return "GL_DEBUG_SOURCE_APPLICATION";
+          default:
+            return std::to_string(source);
+        }
+      }());
+}
+
+void Context::resizeCallback(GLFWwindow* window, int w, int h)
+{
+  static_cast<Context*>(glfwGetWindowUserPointer(window))->_scene->resize(w, h);
+  glViewport(0, 0, w, h);
+}
+
+void Context::keyCallback(GLFWwindow* window, int key, int scancode, int action,
+                          int mods)
+{
+  static_cast<Context*>(glfwGetWindowUserPointer(window))
+      ->_input_list.emplace_back<input::NellInputKey>(
+          {key, scancode, action, mods});
+}
+
+void Context::mouseButtonCallback(GLFWwindow* window, int button, int action,
+                                  int mods)
+{
+  static_cast<Context*>(glfwGetWindowUserPointer(window))
+      ->_input_list.emplace_back<input::NellInputMouseButton>(
+          {button, action, mods});
+}
+
+void Context::scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+{
+  static_cast<Context*>(glfwGetWindowUserPointer(window))
+      ->_input_list.emplace_back<input::NellInputScroll>(
+          {xoffset, yoffset});
+}
 
 void Context::beginUiFrame()
 {
@@ -107,12 +207,13 @@ void Context::beginUiFrame()
 }
 
 void Context::loadScene(
-    const std::pair<const std::string, SceneDefinitionFunction>& scene)
+    const std::pair<const std::string, std::function<SceneImpl*()>> scene_impl)
 {
   if (_scene) _scene.reset();
-  glfwSetWindowTitle(_window,
-                     (_options.window_title + " : " + scene.first).c_str());
-  _scene = std::make_unique<Scene>(scene.first, scene.second);
+  glfwSetWindowTitle(
+      _window, (_options.window_title + " : " + scene_impl.first).c_str());
+  _scene = std::make_unique<Scene>(
+      scene_impl.first, std::unique_ptr<SceneImpl>(scene_impl.second()));
 }
 
 std::string Context::loadSceneArchiveFile(const std::string& archive_filename)

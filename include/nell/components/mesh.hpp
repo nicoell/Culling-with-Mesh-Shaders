@@ -3,7 +3,7 @@
 #include <nell/components/asset_source_path.hpp>
 #include <vector>
 
-namespace nell
+namespace nell::comp
 {
 struct Model
 {

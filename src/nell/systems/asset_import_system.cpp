@@ -2,7 +2,7 @@
 #include <nell/definitions.hpp>
 #include <nell/systems/asset_import_system.hpp>
 
-namespace nell
+namespace nell::systems
 {
 void importAssets(entt::registry &reg)
 {
@@ -26,12 +26,12 @@ void importAssets(entt::registry &reg)
 
     // TODO eventually handle mats, textures, etc.
 
-    auto &model_comp = reg.assign<Model>(entity);
+    auto &model_comp = reg.assign<comp::Model>(entity);
 
     for (unsigned int i_mesh = 0; i_mesh < scene->mNumMeshes; i_mesh++)
     {
       aiMesh *ai_mesh = scene->mMeshes[i_mesh];
-      Model::Mesh mesh;
+      comp::Model::Mesh mesh;
 
       for (unsigned int i_vert = 0; i_vert < ai_mesh->mNumVertices; i_vert++)
       {

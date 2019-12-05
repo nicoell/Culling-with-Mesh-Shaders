@@ -44,5 +44,6 @@ inline void drawComponentImpl(Shaders &shaders)
     }
     ImGui::TreePop();
   }
+
 }
 }  // namespace nell

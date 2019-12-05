@@ -3,7 +3,7 @@
 #include <entt/entity/registry.hpp>
 #include <nell/components/asset_source_path.hpp>
 
-namespace nell
+namespace nell::systems
 {
 template <typename Component>
 void drawComponent(entt::registry &reg, entt::entity &entity)

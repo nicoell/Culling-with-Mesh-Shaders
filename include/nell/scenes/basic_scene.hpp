@@ -3,28 +3,27 @@
 #include <entt/entity/registry.hpp>
 #include <nell/components/asset_source_path.hpp>
 #include <nell/components/shaders.hpp>
+#include <nell/scenes/scene_impl.hpp>
+#include <input.hpp>
 
 namespace nell
 {
-inline void populateBasicScene(entt::registry &reg)
+class BasicScene final : public SceneImpl
 {
-  auto entity = reg.create();
-  auto &asp = reg.assign<AssetSourcePath>(entity);
-  auto &ss = reg.assign<Shaders>(entity);
-  asp.path = "Armadillo.ply";
-  ss.shader_groups.push_back(
-      ShaderGroup{{GL_VERTEX_SHADER, "vertexshader"},
-                  {GL_FRAGMENT_SHADER, "fragmentshader"}});
-  ss.shader_groups.push_back(ShaderGroup{{GL_COMPUTE_SHADER, "computeshader"}});
+ public:
+  BasicScene();
+  void populate(entt::registry &reg) override;
+  void setup(entt::registry &reg) override;
+  void resize(int w, int h) override;
+  void update(const double& time, const double& delta_time,
+              const input::NellInputList& input_list, entt::registry& reg) override;
+  void render(const double& time,
+              const double& delta_time, entt::registry& reg) override;
 
-  auto entity_two = reg.create();
-  auto &asp_two = reg.assign<AssetSourcePath>(entity_two);
-  asp_two.path = "Test2";
+  
+ private:
+  GLuint* _shader_programs;
+  GLuint* _program_pipeline;
+};
 
-  auto entity_three = reg.create();
-  auto &ss_two = reg.assign<Shaders>(entity_three);
-
-  ss_two.shader_groups.push_back(ShaderGroup{
-      {GL_MESH_SHADER_NV, "meshshader"}, {GL_TASK_SHADER_NV, "taskshader"}});
-}
 }  // namespace nell

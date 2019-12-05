@@ -16,9 +16,11 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #include <spdlog/spdlog.h>
-#include <basic_scene.hpp>
 #include <map>
 #include <nell/scene.hpp>
+#include <nell/scenes/basic_scene.hpp>
+#include <nell/scenes/scene_impl.hpp>
+#include <input.hpp>
 
 namespace nell
 {
@@ -38,15 +40,27 @@ class Context
   void run();
 
  private:
-  inline static std::map<std::string, SceneDefinitionFunction>
-      _scene_definition_functions = {{"Basic Scene", populateBasicScene},
-                                     {"Test Scene", populateBasicScene}};
+  inline static std::map<std::string, std::function<SceneImpl *()>>
+      _scene_definition_functions = {
+          {"Basic Scene", []() { return new BasicScene(); }},
+          {"Test Scene", []() { return new BasicScene(); }}};
   static void glfwErrorCallback(int error, const char *description);
+ 
+  static void logGlDebugMessage(GLenum source, GLenum type, GLuint id,
+                                GLenum severity, GLsizei length,
+                                const GLchar *message, const void *param);
+
   static void resizeCallback(GLFWwindow *, int w, int h);
+  static void keyCallback(GLFWwindow *window, int key, int scancode, int action,
+                          int mods);
+  static void mouseButtonCallback(GLFWwindow *window, int button, int action,
+                                  int mods);
+  static void scrollCallback(GLFWwindow *window, double xoffset,
+                             double yoffset);
 
   void beginUiFrame();
   void loadScene(
-      const std::pair<const std::string, const SceneDefinitionFunction> &scene);
+      const std::pair<const std::string, std::function<SceneImpl *()>>);
   std::string loadSceneArchiveFile(const std::string &);
   bool saveSceneArchiveFile(const std::string &, const std::string &);
   void updateUiFrame();
@@ -54,7 +68,8 @@ class Context
 
   GLFWwindow *_window;
   std::unique_ptr<Scene> _scene;
+  input::NellInputList _input_list;
   const ContextOptions _options;
-};
+};  // namespace nell
 
 }  // namespace nell

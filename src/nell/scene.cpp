@@ -15,19 +15,15 @@ Scene::~Scene() = default;
  *
  */
 
-Scene::Scene(std::string scene_name, SceneDefinitionFunction &scene_definition)
-    : _time(0),
-      _delta_time(0),
-      _scene_name(std::move(scene_name)),
-      _scene_archive_name("default_settings")
+Scene::Scene(std::string scene_name, std::unique_ptr<SceneImpl> scene_impl)
+    : _scene_name(std::move(scene_name)),
+      _scene_archive_name("default_settings"),
+      _scene_impl(std::move(scene_impl))
 {
-  scene_definition(_registry);
+  _scene_impl->populate(_registry);
   init();
+  _scene_impl->setup(_registry);
 }
-
-void Scene::setTime(const double time) { _time = time; }
-
-void Scene::setDeltaTime(const double delta_time) { _delta_time = delta_time; }
 
 std::string Scene::serialize() const
 {
@@ -55,12 +51,21 @@ void Scene::deserialize(const std::string &archive)
   init();
 }
 
-void Scene::update()
+void Scene::resize(int w, int h) { _scene_impl->resize(w, h); }
+
+void Scene::update(const double &time, const double &delta_time,
+                   const input::NellInputList &input_list)
 {
   spdlog::debug("Update");
-  drawEntityBrowser<AssetSourcePath, Model, Shaders>(_registry);
+  systems::drawEntityBrowser<AssetSourcePath, comp::Model, Shaders>(_registry);
+
+  _scene_impl->update(time, delta_time, input_list, _registry);
 }
-void Scene::render() { spdlog::debug("Render"); }
+void Scene::render(const double &time, const double &delta_time)
+{
+  spdlog::debug("Render");
+  _scene_impl->render(time, delta_time, _registry);
+}
 std::string Scene::getActiveScene() const { return _scene_name; }
 
 std::string Scene::getArchiveFileName() const
@@ -79,6 +84,6 @@ void Scene::setArchiveName(const std::string &archive_name)
   }
 }
 
-void Scene::init() { importAssets(_registry); }
+void Scene::init() { systems::importAssets(_registry); }
 
 }  // namespace nell

@@ -5,7 +5,7 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
-namespace nell
+namespace nell::systems
 {
 void importAssets(entt::registry &);
 }

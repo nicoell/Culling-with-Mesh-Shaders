@@ -5,7 +5,7 @@
 namespace nell::systems
 {
 void updateFreeflightCamera(entt::registry &, entt::entity &,
-                        input::NellInputList &, double);
-void updateFreeflightCameras(entt::registry &, input::NellInputList &,
+                        const input::NellInputList &, double);
+void updateFreeflightCameras(entt::registry &, const input::NellInputList &,
                              double);
 }  // namespace nell::systems

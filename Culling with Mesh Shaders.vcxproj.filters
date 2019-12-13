@@ -21,9 +21,6 @@
     <ClCompile Include="src\nell\context.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\nell\systems\asset_import_system.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\nell\scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -66,6 +63,9 @@
     <ClCompile Include="src\nell\components\transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\nell\systems\model_import_system.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\nell\context.hpp">
@@ -77,13 +77,7 @@
     <ClInclude Include="include\nell\systems\ui_entity_draw_system.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\nell\systems\asset_import_system.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\nell\components\opengl_program.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nell\components\asset_source_path.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\nell\scene.hpp">
@@ -149,5 +143,17 @@
     <ClInclude Include="include\nell\components\freeflight_camera.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\nell\components\model_source.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\nell\systems\model_import_system.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\nell\components\opengl_mesh.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="FrameworkOverview.cd" />
   </ItemGroup>
 </Project>

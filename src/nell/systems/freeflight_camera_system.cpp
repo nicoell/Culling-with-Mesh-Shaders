@@ -5,7 +5,7 @@
 
 void nell::systems::updateFreeflightCamera(entt::registry &reg,
                                            entt::entity &camera_entity,
-                                           input::NellInputList &input_list,
+                                           const input::NellInputList &input_list,
                                            double delta_time)
 {
   auto [transform, freeflight_camera] =
@@ -80,7 +80,7 @@ void nell::systems::updateFreeflightCamera(entt::registry &reg,
 }
 
 void nell::systems::updateFreeflightCameras(entt::registry &reg,
-                                            input::NellInputList &input_list,
+                                            const input::NellInputList &input_list,
                                             double delta_time)
 {
 }

@@ -158,8 +158,9 @@
     <ClInclude Include="include\nell\components\child_link.hpp" />
     <ClInclude Include="include\nell\components\freeflight_camera.hpp" />
     <ClInclude Include="include\nell\components\mesh.hpp" />
+    <ClInclude Include="include\nell\components\opengl_mesh.hpp" />
     <ClInclude Include="include\nell\components\opengl_program.hpp" />
-    <ClInclude Include="include\nell\components\asset_source_path.hpp" />
+    <ClInclude Include="include\nell\components\model_source.hpp" />
     <ClInclude Include="include\nell\components\shaders.hpp" />
     <ClInclude Include="include\nell\components\transform.hpp" />
     <ClInclude Include="include\nell\definitions.hpp" />
@@ -168,14 +169,17 @@
     <ClInclude Include="include\nell\context.hpp" />
     <ClInclude Include="include\nell\scenes\basic_scene.hpp" />
     <ClInclude Include="include\nell\scenes\scene_impl.hpp" />
-    <ClInclude Include="include\nell\systems\asset_import_system.hpp" />
+    <ClInclude Include="include\nell\systems\model_import_system.hpp" />
     <ClInclude Include="include\nell\systems\freeflight_camera_system.hpp" />
     <ClInclude Include="include\nell\systems\ui_entity_draw_system.hpp" />
     <ClInclude Include="include\utils\glfw_utils.hpp" />
     <ClCompile Include="src\nell\scenes\basic_scene.cpp" />
-    <ClCompile Include="src\nell\systems\asset_import_system.cpp" />
+    <ClCompile Include="src\nell\systems\model_import_system.cpp" />
     <ClInclude Include="include\utils\gl_utils.hpp" />
     <ClInclude Include="include\utils\io_utils.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="FrameworkOverview.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

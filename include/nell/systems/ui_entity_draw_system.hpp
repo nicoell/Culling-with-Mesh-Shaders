@@ -1,7 +1,7 @@
 #pragma once
 #include <imgui/imgui.h>
 #include <entt/entity/registry.hpp>
-#include <nell/components/asset_source_path.hpp>
+#include <nell/components/model_source.hpp>
 
 namespace nell::systems
 {

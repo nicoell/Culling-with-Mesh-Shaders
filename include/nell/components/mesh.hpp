@@ -1,17 +1,39 @@
 #pragma once
+#include <glad/glad.h>
+
 #include <glm/glm.hpp>
-#include <nell/components/asset_source_path.hpp>
+#include <nell/components/model_source.hpp>
 #include <vector>
 
 namespace nell::comp
 {
 struct Model
 {
+  // TODO: Seperate this as base class, allowing different mesh definitions. Or
+  // allow the activation of specific stuff. Make this also work together with
+  // the importer.
   struct Mesh
   {
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec3> normals;
     std::vector<unsigned int> indices;
+
+    size_t getVerticesSize() const
+    {
+      return vertices.size() * getVertexSizeT();
+    }
+    size_t getNormalsSize() const { return normals.size() * getNormalSizeT(); }
+    size_t getIndicesSize() const { return indices.size() * getIndexSizeT(); }
+
+    size_t getVertexSizeT() const { return 3 * sizeof(GLfloat); }
+    size_t getNormalSizeT() const { return 3 * sizeof(GLfloat); }
+    size_t getIndexSizeT() const { return sizeof(GLuint); }
+
+    GLint getVertexSize() const { return 3; }
+    GLint getNormalSize() const { return 3; }
+
+    GLenum getVertexType() const { return GL_FLOAT; }
+    GLenum getNormalType() const { return GL_FLOAT; }
   };
 
   std::vector<Mesh> mesh_list;
@@ -36,4 +58,4 @@ inline void drawComponentImpl(const Model &model)
   }
 }
 
-}  // namespace nell
+}  // namespace nell::comp

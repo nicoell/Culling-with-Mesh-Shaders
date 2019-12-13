@@ -2,9 +2,12 @@
 #include <nell/components/mesh.hpp>
 #include <nell/components/shaders.hpp>
 #include <nell/scene.hpp>
-#include <nell/systems/asset_import_system.hpp>
+#include <nell/systems/model_import_system.hpp>
 #include <nell/systems/ui_entity_draw_system.hpp>
 #include <utility>
+#include <freeflight_camera_system.hpp>
+#include <freeflight_camera.hpp>
+#include <transform.hpp>
 
 namespace nell
 {
@@ -33,7 +36,7 @@ std::string Scene::serialize() const
     cereal::JSONOutputArchive out_archive{out_stream};
     _registry.snapshot()
         .entities(out_archive)
-        .component<AssetSourcePath, Shaders>(out_archive);
+        .component<comp::ModelSource, Shaders>(out_archive);
   }
   return out_stream.str();
 }
@@ -46,7 +49,7 @@ void Scene::deserialize(const std::string &archive)
 
   _registry.loader()
       .entities(in_archive)
-      .component<AssetSourcePath, Shaders>(in_archive);
+      .component<comp::ModelSource, Shaders>(in_archive);
 
   init();
 }
@@ -57,7 +60,8 @@ void Scene::update(const double &time, const double &delta_time,
                    const input::NellInputList &input_list)
 {
   spdlog::debug("Update");
-  systems::drawEntityBrowser<AssetSourcePath, comp::Model, Shaders>(_registry);
+  systems::drawEntityBrowser<comp::ModelSource, comp::Model, Shaders>(_registry);
+  systems::updateFreeflightCamera(_registry, _camera, input_list, delta_time);
 
   _scene_impl->update(time, delta_time, input_list, _registry);
 }
@@ -84,6 +88,12 @@ void Scene::setArchiveName(const std::string &archive_name)
   }
 }
 
-void Scene::init() { systems::importAssets(_registry); }
+void Scene::init()
+{
+  _camera = _registry.create();
+  auto &tf = _registry.assign<comp::Transform>(_camera);
+  auto &ffc = _registry.assign<comp::FreeflightCamera>(_camera);
+  systems::importAssets(_registry);
+}
 
 }  // namespace nell

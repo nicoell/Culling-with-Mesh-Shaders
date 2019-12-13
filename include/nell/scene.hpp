@@ -32,6 +32,8 @@ class Scene final
   entt::registry _registry;
   std::unique_ptr<SceneImpl> _scene_impl;
 
+  entt::entity _camera;
+
   void init();
 };
 

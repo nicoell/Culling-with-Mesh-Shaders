@@ -1,12 +1,12 @@
 #include <nell/components/mesh.hpp>
 #include <nell/definitions.hpp>
-#include <nell/systems/asset_import_system.hpp>
+#include <nell/systems/model_import_system.hpp>
 
 namespace nell::systems
 {
 void importAssets(entt::registry &reg)
 {
-  auto asset_source_view = reg.view<AssetSourcePath>();
+  auto asset_source_view = reg.view<comp::ModelSource>();
 
   Assimp::Importer importer;
 

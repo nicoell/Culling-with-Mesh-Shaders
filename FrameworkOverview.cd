@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="nell::Context">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAggIwAwAABAAIAAAgAAEAAAgAAAAAAAICAAQAAAA=</HashCode>
+      <FileName>include\nell\context.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="nell::Scene">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAAAgAAAIIAAQAIgABIAQQBQAAAUAAA=</HashCode>
+      <FileName>include\nell\scene.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="nell::BasicScene">
+    <Position X="0.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgAAAQAAABAAAAAAAAAAQIAAAgUAAA=</HashCode>
+      <FileName>include\nell\scenes\basic_scene.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="nell::SceneImpl">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAEQAAAAgUAAA=</HashCode>
+      <FileName>include\nell\scenes\scene_impl.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="nell::ChildLink" Collapsed="true">
+    <Position X="6.25" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>include\nell\components\child_link.hpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="nell::OpenGlProgram" Collapsed="true">
+    <Position X="9.25" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>include\nell\components\opengl_program.hpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="nell::Shaders" Collapsed="true">
+    <Position X="5.75" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAA=</HashCode>
+      <FileName>include\nell\components\shaders.hpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="nell::ContextOptions" Collapsed="true">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAJAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAA=</HashCode>
+      <FileName>include\nell\context.hpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="nell::comp::FreeflightCamera" Collapsed="true">
+    <Position X="9.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAEAAAAQAAAAAAAAAAAAAAABAAAAAAAAAAAEAA=</HashCode>
+      <FileName>include\nell\components\freeflight_camera.hpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="nell::comp::Model" Collapsed="true">
+    <Position X="6.25" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>include\nell\components\mesh.hpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="nell::comp::ModelSource" Collapsed="true">
+    <Position X="8" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>include\nell\components\model_source.hpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="nell::comp::Transform" Collapsed="true">
+    <Position X="8" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAIAAgAAAAAIwAAAAAAQACAAgAAgAiAAAAAACACA=</HashCode>
+      <FileName>include\nell\components\transform.hpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Typedef Name="nell::ShaderGroup" Collapsed="true">
+    <Position X="7.5" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>include\nell\components\shaders.hpp</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -13,15 +13,15 @@ namespace nell
 class BasicScene final : public SceneImpl
 {
  public:
-  BasicScene();
-  void populate(entt::registry& reg) override;
-  void setup(entt::registry& reg) override;
-  void resize(int w, int h) override;
+  explicit BasicScene();
+  void populate(Scene*, entt::registry& reg) override;
+  void setup(Scene*, entt::registry& reg) override;
+  /*void resize(int w, int h) override;
   void update(const double& time, const double& delta_time,
               const input::NellInputList& input_list,
               entt::registry& reg) override;
   void render(const double& time, const double& delta_time,
-              entt::registry& reg) override;
+              entt::registry& reg) override;*/
 
  private:
   GLuint* _program_pipeline;

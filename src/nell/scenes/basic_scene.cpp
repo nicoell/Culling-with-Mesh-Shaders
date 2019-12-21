@@ -38,14 +38,23 @@ BasicScene::BasicScene()
                      static_cast<GLuint>(_basic_fragment_shader));
 }
 
-void BasicScene::populate(entt::registry &reg)
+void BasicScene::populate(Scene *scene, entt::registry &reg)
 {
   auto entity = reg.create();
   auto &asp = reg.assign<comp::ModelSource>(entity);
   asp.path = "Armadillo.ply";
 }
 
-void BasicScene::setup(entt::registry &reg)
+/*
+ * Entities hold Buffers.
+ * Classes for Shaders, hold necessary data (like vao), consist of Systems to
+ * initialize and render.
+ *
+ * TODO: Implement callbacks instead of calling render->render->render of all
+ * those subsystems.
+ */
+
+void BasicScene::setup(Scene *scene, entt::registry &reg)
 {
   auto model_view = reg.view<comp::Model>();
 
@@ -64,38 +73,39 @@ void BasicScene::setup(entt::registry &reg)
       const auto normal_bindloc = 1;
 
       glCreateVertexArrays(1, &vao);
+      // Enable vao attributes
+      glEnableVertexArrayAttrib(vao, _basic_vertex_shader[kAttrPosition]);
+      glEnableVertexArrayAttrib(vao, _basic_vertex_shader[kAttrNormal]);
+      // Format vao attributes
+      glVertexArrayAttribFormat(vao, _basic_vertex_shader[kAttrPosition],
+                                mesh.getVertexSize(), mesh.getVertexType(),
+                                GL_FALSE, 0);
+      glVertexArrayAttribFormat(vao, _basic_vertex_shader[kAttrNormal],
+                                mesh.getNormalSize(), mesh.getNormalType(),
+                                GL_FALSE, 0);
+
+      // Set binding location of attributes
+      glVertexArrayAttribBinding(vao, _basic_vertex_shader[kAttrPosition],
+                                 vertices_bindloc);
+      glVertexArrayAttribBinding(vao, _basic_vertex_shader[kAttrNormal],
+                                 normal_bindloc);
 
       // Setup VBO
       glCreateBuffers(1, &vbo);
       glNamedBufferStorage(vbo, mesh.getVerticesSize(), mesh.vertices.data(),
                            GL_STATIC_DRAW);
-      // Enable vao position attribute and set format
-      glEnableVertexArrayAttrib(vao, _basic_vertex_shader[kAttrPosition]);
-      glVertexArrayAttribFormat(vao, _basic_vertex_shader[kAttrPosition],
-                                mesh.getVertexSize(), mesh.getVertexType(),
-                                GL_FALSE, 0);
-      // Bind vbo to vao at bindloc
-      glVertexArrayVertexBuffer(vao, vertices_bindloc, vbo, 0,
-                                mesh.getVertexSize());
-      // Bind position attribute to bindloc of vbo
-      glVertexArrayAttribBinding(vao, _basic_vertex_shader[kAttrPosition],
-                                 vertices_bindloc);
-
       // Setup NBO
       glCreateBuffers(1, &nbo);
       glNamedBufferStorage(nbo, mesh.getNormalsSize(), mesh.normals.data(),
                            GL_STATIC_DRAW);
-      // Enable vao normal attribute and set format
-      glEnableVertexArrayAttrib(vao, _basic_vertex_shader[kAttrNormal]);
-      glVertexArrayAttribFormat(vao, _basic_vertex_shader[kAttrNormal],
-                                mesh.getNormalSize(), mesh.getNormalType(),
-                                GL_FALSE, 0);
+
+      // Bind vbo to vao at bindloc
+      glVertexArrayVertexBuffer(vao, vertices_bindloc, vbo, 0,
+                                mesh.getVertexSize());
+
       // Bind nbo to vao at bindloc
       glVertexArrayVertexBuffer(vao, normal_bindloc, nbo, 0,
                                 mesh.getNormalSize());
-      // Bind normal attribute to bindloc of nbo
-      glVertexArrayAttribBinding(vao, _basic_vertex_shader[kAttrNormal],
-                                 normal_bindloc);
 
       // Setup IBO
       glCreateBuffers(1, &ibo);
@@ -106,14 +116,14 @@ void BasicScene::setup(entt::registry &reg)
     }
   }
 }
-void BasicScene::resize(int w, int h) {}
-void BasicScene::update(const double &time, const double &delta_time,
-                        const input::NellInputList &input_list,
-                        entt ::registry &reg)
-{
-}
-void BasicScene::render(const double &time, const double &delta_time,
-                        entt::registry &reg)
-{
-}
+// void BasicScene::resize(int w, int h) {}
+// void BasicScene::update(const double &time, const double &delta_time,
+//                        const input::NellInputList &input_list,
+//                        entt ::registry &reg)
+//{
+//}
+// void BasicScene::render(const double &time, const double &delta_time,
+//                        entt::registry &reg)
+//{
+//}
 }  // namespace nell

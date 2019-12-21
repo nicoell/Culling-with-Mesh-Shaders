@@ -155,5 +155,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="FrameworkOverview.cd" />
+    <None Include="resources\shaders\basic_shader.vert" />
+    <None Include="resources\shaders\basic_shader.frag" />
   </ItemGroup>
 </Project>

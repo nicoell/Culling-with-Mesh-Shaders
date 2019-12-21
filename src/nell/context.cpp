@@ -53,7 +53,7 @@ Context::Context(ContextOptions creation_options)
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // Init Framework specifics: Scene
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  //_scene = std::make_unique<Scene>();
+  
 }
 
 void Context::run()

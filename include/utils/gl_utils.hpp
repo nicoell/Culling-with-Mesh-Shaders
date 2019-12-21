@@ -16,6 +16,7 @@ struct InterfaceToName
   const char* name;
 };
 
+//TODO Uniform Buffers & Uniforms
 class ShaderDefinition
 {
  public:

@@ -180,6 +180,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="FrameworkOverview.cd" />
+    <None Include="resources\shaders\basic_shader.frag" />
+    <None Include="resources\shaders\basic_shader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

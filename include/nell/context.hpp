@@ -60,7 +60,7 @@ class Context
 
   void beginUiFrame();
   void loadScene(
-      const std::pair<const std::string, std::function<SceneImpl *()>>);
+      const std::pair<const std::string, std::function<SceneImpl *()>> &);
   std::string loadSceneArchiveFile(const std::string &);
   bool saveSceneArchiveFile(const std::string &, const std::string &);
   void updateUiFrame();

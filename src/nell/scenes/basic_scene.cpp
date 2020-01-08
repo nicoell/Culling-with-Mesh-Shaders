@@ -116,14 +116,14 @@ void BasicScene::setup(Scene *scene, entt::registry &reg)
     }
   }
 }
-// void BasicScene::resize(int w, int h) {}
-// void BasicScene::update(const double &time, const double &delta_time,
-//                        const input::NellInputList &input_list,
-//                        entt ::registry &reg)
-//{
-//}
-// void BasicScene::render(const double &time, const double &delta_time,
-//                        entt::registry &reg)
-//{
-//}
+ void BasicScene::resize(int w, int h) {}
+ void BasicScene::update(const double &time, const double &delta_time,
+                        const input::NellInputList &input_list,
+                        entt ::registry &reg)
+{
+}
+ void BasicScene::render(const double &time, const double &delta_time,
+                        entt::registry &reg)
+{
+}
 }  // namespace nell

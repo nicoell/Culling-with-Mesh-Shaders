@@ -207,7 +207,7 @@ void Context::beginUiFrame()
 }
 
 void Context::loadScene(
-    const std::pair<const std::string, std::function<SceneImpl*()>> scene_impl)
+    const std::pair<const std::string, std::function<SceneImpl*()>> &scene_impl)
 {
   if (_scene) _scene.reset();
   glfwSetWindowTitle(

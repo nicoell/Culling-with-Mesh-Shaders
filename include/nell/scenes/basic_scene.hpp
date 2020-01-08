@@ -7,6 +7,7 @@
 #include <nell/components/shaders.hpp>
 #include <nell/scenes/scene_impl.hpp>
 #include <utils/gl_utils.hpp>
+#include <basic_shading_system.hpp>
 
 namespace nell
 {
@@ -16,12 +17,11 @@ class BasicScene final : public SceneImpl
   explicit BasicScene();
   void populate(Scene*, entt::registry& reg) override;
   void setup(Scene*, entt::registry& reg) override;
-  /*void resize(int w, int h) override;
+  void resize(int w, int h) override;
   void update(const double& time, const double& delta_time,
-              const input::NellInputList& input_list,
-              entt::registry& reg) override;
+              entt::registry& reg);
   void render(const double& time, const double& delta_time,
-              entt::registry& reg) override;*/
+              entt::registry& reg);
 
  private:
   GLuint* _program_pipeline;

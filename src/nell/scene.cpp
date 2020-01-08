@@ -21,21 +21,21 @@ Scene::~Scene() = default;
 Scene::Scene(std::string scene_name, std::unique_ptr<SceneImpl> scene_impl)
     : _scene_name(std::move(scene_name)),
       _scene_archive_name("default_settings"),
-      _scene_impl(std::move(scene_impl)),
-      _callbacks_map({{SceneCallbackEnum::kEarlyUpdateCallbackEnum,
-                       std::vector<CallbackFuncHandle<EarlyUpdateCallback>>()},
-                      {SceneCallbackEnum::kUpdateCallbackEnum,
-                       std::vector<CallbackFuncHandle<UpdateCallback>>()},
-                      {SceneCallbackEnum::kLateUpdateCallbackEnum,
-                       std::vector<CallbackFuncHandle<LateUpdateCallback>>()},
-                      {SceneCallbackEnum::kFixedUpdateCallbackEnum,
-                       std::vector<CallbackFuncHandle<FixedUpdateCallback>>()},
-                      {SceneCallbackEnum::kRenderCallbackEnum,
-                       std::vector<CallbackFuncHandle<RenderCallback>>()},
-                      {SceneCallbackEnum::kPostRenderCallbackEnum,
-                       std::vector<CallbackFuncHandle<PostRenderCallback>>()},
-                      {SceneCallbackEnum::kResizeCallbackEnum,
-                       std::vector<CallbackFuncHandle<ResizeCallback>>()}})
+      _scene_impl(std::move(scene_impl)) /*,
+       _callbacks_map({{SceneCallbackEnum::kEarlyUpdateCallbackEnum,
+                        std::vector<CallbackFuncHandle<EarlyUpdateCallback>>()},
+                       {SceneCallbackEnum::kUpdateCallbackEnum,
+                        std::vector<CallbackFuncHandle<UpdateCallback>>()},
+                       {SceneCallbackEnum::kLateUpdateCallbackEnum,
+                        std::vector<CallbackFuncHandle<LateUpdateCallback>>()},
+                       {SceneCallbackEnum::kFixedUpdateCallbackEnum,
+                        std::vector<CallbackFuncHandle<FixedUpdateCallback>>()},
+                       {SceneCallbackEnum::kRenderCallbackEnum,
+                        std::vector<CallbackFuncHandle<RenderCallback>>()},
+                       {SceneCallbackEnum::kPostRenderCallbackEnum,
+                        std::vector<CallbackFuncHandle<PostRenderCallback>>()},
+                       {SceneCallbackEnum::kResizeCallbackEnum,
+                        std::vector<CallbackFuncHandle<ResizeCallback>>()}})*/
 {
   _scene_impl->populate(this, _registry);
   init();
@@ -68,22 +68,41 @@ void Scene::deserialize(const std::string &archive)
   init();
 }
 
-void Scene::resize(int w, int h) { //_scene_impl->resize(w, h);
-  }
+void Scene::resize(int w, int h)
+{  //_scene_impl->resize(w, h);
+}
+
 void Scene::update(const double &time, const double &delta_time,
                    const input::NellInputList &input_list)
 {
-  spdlog::debug("Update");
-  systems::drawEntityBrowser<comp::ModelSource, comp::Model, Shaders>(
-      _registry);
-  systems::updateFreeflightCamera(_registry, _camera, input_list, delta_time);
+  //// Early Update
 
-  //_scene_impl->update(time, delta_time, input_list, _registry);
+  systems::drawEntityBrowser<comp::ModelSource, comp::Model, Shaders>(
+     _registry);
+  systems::updateFreeflightCamera(_registry, _camera, input_list,
+  delta_time);
+
+  //// Update
+  //for (auto update_callback : _update_callbacks)
+  //{
+  //  update_callback.callback.update(time, delta_time, _registry);
+  //}
+
+  // Late Update
+
+  _scene_impl->update(time, delta_time, input_list, _registry);
 }
 void Scene::render(const double &time, const double &delta_time)
 {
-  spdlog::debug("Render");
-  //_scene_impl->render(time, delta_time, _registry);
+  // Render
+  //for (auto render_callback : _render_callbacks)
+  //{
+  //  render_callback.callback.render(time, delta_time, _registry);
+  //}
+
+  //// Post Render
+
+  _scene_impl->render(time, delta_time, _registry);
 }
 std::string Scene::getActiveScene() const { return _scene_name; }
 
@@ -111,61 +130,61 @@ void Scene::init()
   systems::importAssets(_registry);
 }
 //
-//unsigned Scene::addEarlyUpdateCallback(EarlyUpdateCallback callback)
+// unsigned Scene::addEarlyUpdateCallback(EarlyUpdateCallback callback)
 //{
 //  return addCallback(_early_update_callbacks, callback);
 //}
 //
-//unsigned Scene::addUpdateCallback(UpdateCallback callback)
+// unsigned Scene::addUpdateCallback(UpdateCallback callback)
 //{
 //  return addCallback(_update_callbacks, callback);
 //}
 //
-//unsigned Scene::addLateUpdateCallback(LateUpdateCallback callback)
+// unsigned Scene::addLateUpdateCallback(LateUpdateCallback callback)
 //{
 //  return addCallback(_late_update_callbacks, callback);
 //}
 //
-//unsigned Scene::addFixedUpdateCallback(FixedUpdateCallback callback)
+// unsigned Scene::addFixedUpdateCallback(FixedUpdateCallback callback)
 //{
 //  return addCallback(_fixed_update_callbacks, callback);
 //}
 //
-//unsigned Scene::addRenderCallback(RenderCallback callback)
+// unsigned Scene::addRenderCallback(RenderCallback callback)
 //{
 //  return addCallback(_render_callbacks, callback);
 //}
 //
-//unsigned Scene::addPostRenderCallback(PostRenderCallback callback)
+// unsigned Scene::addPostRenderCallback(PostRenderCallback callback)
 //{
 //  return addCallback(_post_render_callbacks, callback);
 //}
 //
-//void Scene::removeEarlyUpdateCallback(unsigned handle)
+// void Scene::removeEarlyUpdateCallback(unsigned handle)
 //{
 //  removeCallback(_early_update_callbacks, handle);
 //}
 //
-//void Scene::removeUpdateCallback(unsigned handle)
+// void Scene::removeUpdateCallback(unsigned handle)
 //{
 //  removeCallback(_update_callbacks, handle);
 //}
 //
-//void Scene::removeLateUpdateCallback(unsigned handle)
+// void Scene::removeLateUpdateCallback(unsigned handle)
 //{
 //  removeCallback(_late_update_callbacks, handle);
 //}
 //
-//void Scene::removeFixedUpdateCallback(unsigned handle)
+// void Scene::removeFixedUpdateCallback(unsigned handle)
 //{
 //  removeCallback(_fixed_update_callbacks, handle);
 //}
 //
-//void Scene::removeRenderCallback(unsigned handle)
+// void Scene::removeRenderCallback(unsigned handle)
 //{
 //  removeCallback(_render_callbacks, handle);
 //}
-//void Scene::removePostRenderCallback(unsigned handle)
+// void Scene::removePostRenderCallback(unsigned handle)
 //{
 //  removeCallback(_post_render_callbacks, handle);
 //}

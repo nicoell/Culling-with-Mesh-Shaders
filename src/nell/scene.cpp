@@ -1,11 +1,13 @@
+#include <basic_shading_objects.hpp>
+#include <camera_system.hpp>
 #include <cereal/archives/json.hpp>
-#include <freeflight_camera.hpp>
-#include <freeflight_camera_system.hpp>
+#include <freeflight_controller.hpp>
+#include <freeflight_controller_system.hpp>
 #include <nell/components/mesh.hpp>
-#include <nell/components/shaders.hpp>
 #include <nell/scene.hpp>
 #include <nell/systems/model_import_system.hpp>
 #include <nell/systems/ui_entity_draw_system.hpp>
+#include <perspective_camera.hpp>
 #include <transform.hpp>
 #include <utility>
 
@@ -18,24 +20,13 @@ Scene::~Scene() = default;
  *
  */
 
-Scene::Scene(std::string scene_name, std::unique_ptr<SceneImpl> scene_impl)
+Scene::Scene(std::string scene_name, std::unique_ptr<SceneImpl> scene_impl,
+             int width, int height)
     : _scene_name(std::move(scene_name)),
       _scene_archive_name("default_settings"),
-      _scene_impl(std::move(scene_impl)) /*,
-       _callbacks_map({{SceneCallbackEnum::kEarlyUpdateCallbackEnum,
-                        std::vector<CallbackFuncHandle<EarlyUpdateCallback>>()},
-                       {SceneCallbackEnum::kUpdateCallbackEnum,
-                        std::vector<CallbackFuncHandle<UpdateCallback>>()},
-                       {SceneCallbackEnum::kLateUpdateCallbackEnum,
-                        std::vector<CallbackFuncHandle<LateUpdateCallback>>()},
-                       {SceneCallbackEnum::kFixedUpdateCallbackEnum,
-                        std::vector<CallbackFuncHandle<FixedUpdateCallback>>()},
-                       {SceneCallbackEnum::kRenderCallbackEnum,
-                        std::vector<CallbackFuncHandle<RenderCallback>>()},
-                       {SceneCallbackEnum::kPostRenderCallbackEnum,
-                        std::vector<CallbackFuncHandle<PostRenderCallback>>()},
-                       {SceneCallbackEnum::kResizeCallbackEnum,
-                        std::vector<CallbackFuncHandle<ResizeCallback>>()}})*/
+      _scene_impl(std::move(scene_impl)),
+      _width(width),
+      _height(height)
 {
   _scene_impl->populate(this, _registry);
   init();
@@ -50,59 +41,45 @@ std::string Scene::serialize() const
     cereal::JSONOutputArchive out_archive{out_stream};
     _registry.snapshot()
         .entities(out_archive)
-        .component<comp::ModelSource, Shaders>(out_archive);
+        .component<comp::ModelSource>(out_archive);
   }
   return out_stream.str();
 }
 
 void Scene::deserialize(const std::string &archive)
 {
-  if (!_registry.empty()) _registry.reset();
+  if (!_registry.empty()) _registry.clear();
   std::stringstream in_stream(archive);
   cereal::JSONInputArchive in_archive{in_stream};
 
   _registry.loader()
       .entities(in_archive)
-      .component<comp::ModelSource, Shaders>(in_archive);
+      .component<comp::ModelSource>(in_archive);
 
   init();
 }
 
 void Scene::resize(int w, int h)
-{  //_scene_impl->resize(w, h);
+{
+  auto perspective_camera = _registry.get<comp::PerspectiveCamera>(_camera);
+  _width = w;
+  _height = h;
+  perspective_camera.setAspect(w, h);
+  _scene_impl->resize(w, h);
 }
 
 void Scene::update(const double &time, const double &delta_time,
                    const input::NellInputList &input_list)
 {
-  //// Early Update
+  systems::updateFreeflightController(_registry, _camera, input_list,
+                                      delta_time);
+  systems::updatePerspectiveCamera(_registry, _camera);
 
-  systems::drawEntityBrowser<comp::ModelSource, comp::Model, Shaders>(
-     _registry);
-  systems::updateFreeflightCamera(_registry, _camera, input_list,
-  delta_time);
-
-  //// Update
-  //for (auto update_callback : _update_callbacks)
-  //{
-  //  update_callback.callback.update(time, delta_time, _registry);
-  //}
-
-  // Late Update
-
-  _scene_impl->update(time, delta_time, input_list, _registry);
+  _scene_impl->update(this, _registry, input_list, time, delta_time);
 }
 void Scene::render(const double &time, const double &delta_time)
 {
-  // Render
-  //for (auto render_callback : _render_callbacks)
-  //{
-  //  render_callback.callback.render(time, delta_time, _registry);
-  //}
-
-  //// Post Render
-
-  _scene_impl->render(time, delta_time, _registry);
+  _scene_impl->render(this, _registry, _camera, time, delta_time);
 }
 std::string Scene::getActiveScene() const { return _scene_name; }
 
@@ -124,69 +101,17 @@ void Scene::setArchiveName(const std::string &archive_name)
 
 void Scene::init()
 {
+  //_registry.on_construct<double>().connect<&entt::registry::assign_or_replace<int>>();
+  //_registry.on_construct<comp::ModelSource>().connect<&entt::registry::assign_or_replace<comp::Transform>>();
+
   _camera = _registry.create();
+  _registry.assign<comp::EntityName>(_camera, "MainCamera");
   auto &tf = _registry.assign<comp::Transform>(_camera);
-  auto &ffc = _registry.assign<comp::FreeflightCamera>(_camera);
+  auto &ffc = _registry.assign<comp::FreeflightController>(_camera);
+  auto &pc = _registry.assign<comp::PerspectiveCamera>(_camera);
+
+  pc.setAspect(_width, _height);
+
   systems::importAssets(_registry);
 }
-//
-// unsigned Scene::addEarlyUpdateCallback(EarlyUpdateCallback callback)
-//{
-//  return addCallback(_early_update_callbacks, callback);
-//}
-//
-// unsigned Scene::addUpdateCallback(UpdateCallback callback)
-//{
-//  return addCallback(_update_callbacks, callback);
-//}
-//
-// unsigned Scene::addLateUpdateCallback(LateUpdateCallback callback)
-//{
-//  return addCallback(_late_update_callbacks, callback);
-//}
-//
-// unsigned Scene::addFixedUpdateCallback(FixedUpdateCallback callback)
-//{
-//  return addCallback(_fixed_update_callbacks, callback);
-//}
-//
-// unsigned Scene::addRenderCallback(RenderCallback callback)
-//{
-//  return addCallback(_render_callbacks, callback);
-//}
-//
-// unsigned Scene::addPostRenderCallback(PostRenderCallback callback)
-//{
-//  return addCallback(_post_render_callbacks, callback);
-//}
-//
-// void Scene::removeEarlyUpdateCallback(unsigned handle)
-//{
-//  removeCallback(_early_update_callbacks, handle);
-//}
-//
-// void Scene::removeUpdateCallback(unsigned handle)
-//{
-//  removeCallback(_update_callbacks, handle);
-//}
-//
-// void Scene::removeLateUpdateCallback(unsigned handle)
-//{
-//  removeCallback(_late_update_callbacks, handle);
-//}
-//
-// void Scene::removeFixedUpdateCallback(unsigned handle)
-//{
-//  removeCallback(_fixed_update_callbacks, handle);
-//}
-//
-// void Scene::removeRenderCallback(unsigned handle)
-//{
-//  removeCallback(_render_callbacks, handle);
-//}
-// void Scene::removePostRenderCallback(unsigned handle)
-//{
-//  removeCallback(_post_render_callbacks, handle);
-//}
-
 }  // namespace nell

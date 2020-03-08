@@ -57,6 +57,7 @@ class Context
                                   int mods);
   static void scrollCallback(GLFWwindow *window, double xoffset,
                              double yoffset);
+  static void cursorPosCallback(GLFWwindow *window, double xpos, double ypos);
 
   void beginUiFrame();
   void loadScene(
@@ -70,6 +71,8 @@ class Context
   std::unique_ptr<Scene> _scene;
   input::NellInputList _input_list;
   const ContextOptions _options;
+  int _width;
+  int _height;
 };  // namespace nell
 
 }  // namespace nell

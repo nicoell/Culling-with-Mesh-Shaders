@@ -20,6 +20,8 @@ Context::Context(ContextOptions creation_options)
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
   glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
+  _width = _options.window_width;
+  _height = _options.window_height;
   _window = glfwCreateWindow(_options.window_width, _options.window_height,
                              _options.window_title.c_str(), nullptr, nullptr);
   glfwSetWindowPos(_window, 100, 50);
@@ -28,6 +30,7 @@ Context::Context(ContextOptions creation_options)
   glfwSetKeyCallback(_window, keyCallback);
   glfwSetMouseButtonCallback(_window, mouseButtonCallback);
   glfwSetScrollCallback(_window, scrollCallback);
+  glfwSetCursorPosCallback(_window, cursorPosCallback);
   glfwMakeContextCurrent(_window);
 
   const auto glad_load_status = gladLoadGL();
@@ -37,7 +40,10 @@ Context::Context(ContextOptions creation_options)
     exit(-1);
   }
 
+  glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
   glDebugMessageCallback(logGlDebugMessage, nullptr);
+
+  glEnable(GL_DEPTH_TEST);
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // Init ImGui
@@ -65,8 +71,7 @@ void Context::run()
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // Begin Frame
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    glfwPollEvents();
-
+    glClearColor(0.3, 0.3, 0.3, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     const double delta_time = glfwGetTime() - time;
     time = glfwGetTime();
@@ -88,6 +93,8 @@ void Context::run()
     _input_list.clear();
 
     glfwSwapBuffers(_window);
+
+    glfwPollEvents();
   }
 
   ImGui_ImplOpenGL3_Shutdown();
@@ -121,6 +128,7 @@ void Context::logGlDebugMessage(GLenum source, GLenum type, GLuint id,
       break;
     default:
       loglevel = spdlog::level::info;
+      return; //
       break;
   }
 
@@ -172,7 +180,10 @@ void Context::logGlDebugMessage(GLenum source, GLenum type, GLuint id,
 
 void Context::resizeCallback(GLFWwindow* window, int w, int h)
 {
-  static_cast<Context*>(glfwGetWindowUserPointer(window))->_scene->resize(w, h);
+  auto context = static_cast<Context*>(glfwGetWindowUserPointer(window));
+  context->_width = w;
+  context->_height = h;
+  context->_scene->resize(w, h);
   glViewport(0, 0, w, h);
 }
 
@@ -199,6 +210,11 @@ void Context::scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
           {xoffset, yoffset});
 }
 
+void Context::cursorPosCallback (GLFWwindow *window, double xpos, double ypos) {
+  static_cast<Context*>(glfwGetWindowUserPointer(window))
+      ->_input_list.emplace_back<input::NellInputCursorPos>({xpos, ypos});
+}
+
 void Context::beginUiFrame()
 {
   ImGui_ImplOpenGL3_NewFrame();
@@ -213,7 +229,7 @@ void Context::loadScene(
   glfwSetWindowTitle(
       _window, (_options.window_title + " : " + scene_impl.first).c_str());
   _scene = std::make_unique<Scene>(
-      scene_impl.first, std::unique_ptr<SceneImpl>(scene_impl.second()));
+      scene_impl.first, std::unique_ptr<SceneImpl>(scene_impl.second()), _width, _height);
 }
 
 std::string Context::loadSceneArchiveFile(const std::string& archive_filename)
@@ -339,7 +355,7 @@ void Context::updateUiFrame()
 void Context::endUiFrame()
 {
   ImGui::Render();
-  glViewport(0, 0, _options.window_width, _options.window_height);
+  glViewport(0, 0, _width, _height);
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 }  // namespace nell

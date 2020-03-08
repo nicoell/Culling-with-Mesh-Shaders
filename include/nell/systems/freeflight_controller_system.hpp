@@ -1,11 +1,11 @@
 #pragma once
 #include <entt/entity/registry.hpp>
-#include <input.hpp>
+#include <nell/input.hpp>
 
 namespace nell::systems
 {
-void updateFreeflightCamera(entt::registry &, entt::entity &,
+void updateFreeflightController(entt::registry &, entt::entity &,
                         const input::NellInputList &, double);
-void updateFreeflightCameras(entt::registry &, const input::NellInputList &,
+void updateFreeflightControllers(entt::registry &, const input::NellInputList &,
                              double);
 }  // namespace nell::systems

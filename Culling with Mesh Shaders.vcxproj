@@ -88,8 +88,11 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)include\glad;$(ProjectDir)include\imgui;$(ProjectDir)include\imgui\impl;$(ProjectDir)include\imgui\misc;$(ProjectDir)include\KHR;$(ProjectDir)include\nell;$(ProjectDir)include\nell\components;$(ProjectDir)include\nell\scenes;$(ProjectDir)include\nell\systems;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <BrowseInformation>true</BrowseInformation>
+      <EnableModules>
+      </EnableModules>
+      <AdditionalOptions>/experimental:newLambdaProcessor %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,17 +141,14 @@
     <ClCompile Include="src\imgui\impl\imgui_impl_opengl3.cpp" />
     <ClCompile Include="src\imgui\misc\imgui_stdlib.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\nell\components\basic_shading_objects.cpp" />
+    <ClCompile Include="src\nell\components\perspective_camera.cpp" />
     <ClCompile Include="src\nell\components\transform.cpp" />
     <ClCompile Include="src\nell\context.cpp" />
     <ClCompile Include="src\nell\scene.cpp" />
-    <ClCompile Include="src\nell\systems\basic_shading_system.cpp" />
-    <ClCompile Include="src\nell\systems\callbacks\early_update_emitter.cpp" />
-    <ClCompile Include="src\nell\systems\callbacks\fixed_update_emitter.cpp" />
-    <ClCompile Include="src\nell\systems\callbacks\late_update_emitter.cpp" />
-    <ClCompile Include="src\nell\systems\callbacks\post_render_emitter.cpp" />
-    <ClCompile Include="src\nell\systems\callbacks\render_emitter.cpp" />
-    <ClCompile Include="src\nell\systems\callbacks\update_emitter.cpp" />
-    <ClCompile Include="src\nell\systems\freeflight_camera_system.cpp" />
+    <ClCompile Include="src\nell\scenes\basic_taskmeshshader_scene.cpp" />
+    <ClCompile Include="src\nell\systems\camera_system.cpp" />
+    <ClCompile Include="src\nell\systems\freeflight_controller_system.cpp" />
     <ClCompile Include="src\nell\utils\glfw_utils.cpp" />
     <ClCompile Include="src\nell\utils\gl_utils.cpp" />
     <ClCompile Include="src\nell\utils\io_utils.cpp" />
@@ -164,35 +164,22 @@
     <ClInclude Include="include\KHR\khrplatform.h" />
     <ClInclude Include="include\nell\components\basic_shading_objects.hpp" />
     <ClInclude Include="include\nell\components\child_link.hpp" />
-    <ClInclude Include="include\nell\components\freeflight_camera.hpp" />
+    <ClInclude Include="include\nell\components\entity_name.hpp" />
+    <ClInclude Include="include\nell\components\freeflight_controller.hpp" />
     <ClInclude Include="include\nell\components\mesh.hpp" />
-    <ClInclude Include="include\nell\components\opengl_mesh.hpp" />
-    <ClInclude Include="include\nell\components\opengl_program.hpp" />
     <ClInclude Include="include\nell\components\model_source.hpp" />
-    <ClInclude Include="include\nell\components\shaders.hpp" />
+    <ClInclude Include="include\nell\components\perspective_camera.hpp" />
     <ClInclude Include="include\nell\components\transform.hpp" />
     <ClInclude Include="include\nell\definitions.hpp" />
     <ClInclude Include="include\nell\input.hpp" />
     <ClInclude Include="include\nell\scene.hpp" />
     <ClInclude Include="include\nell\context.hpp" />
+    <ClInclude Include="include\nell\scenes\basic_taskmeshshader_scene.hpp" />
     <ClInclude Include="include\nell\scenes\basic_scene.hpp" />
     <ClInclude Include="include\nell\scenes\scene_impl.hpp" />
-    <ClInclude Include="include\nell\systems\basic_shading_system.hpp" />
-    <ClInclude Include="include\nell\systems\callbacks\callback_func_handle.hpp" />
-    <ClInclude Include="include\nell\systems\callbacks\early_update_callback.hpp" />
-    <ClInclude Include="include\nell\systems\callbacks\early_update_emitter.hpp" />
-    <ClInclude Include="include\nell\systems\callbacks\fixed_update_callback.hpp" />
-    <ClInclude Include="include\nell\systems\callbacks\fixed_update_emitter.hpp" />
-    <ClInclude Include="include\nell\systems\callbacks\late_update_callback.hpp" />
-    <ClInclude Include="include\nell\systems\callbacks\late_update_emitter.hpp" />
-    <ClInclude Include="include\nell\systems\callbacks\post_render_callback.hpp" />
-    <ClInclude Include="include\nell\systems\callbacks\post_render_emitter.hpp" />
-    <ClInclude Include="include\nell\systems\callbacks\render_callback.hpp" />
-    <ClInclude Include="include\nell\systems\callbacks\render_emitter.hpp" />
-    <ClInclude Include="include\nell\systems\callbacks\update_callback.hpp" />
-    <ClInclude Include="include\nell\systems\callbacks\update_emitter.hpp" />
+    <ClInclude Include="include\nell\systems\camera_system.hpp" />
     <ClInclude Include="include\nell\systems\model_import_system.hpp" />
-    <ClInclude Include="include\nell\systems\freeflight_camera_system.hpp" />
+    <ClInclude Include="include\nell\systems\freeflight_controller_system.hpp" />
     <ClInclude Include="include\nell\systems\ui_entity_draw_system.hpp" />
     <ClInclude Include="include\utils\glfw_utils.hpp" />
     <ClCompile Include="src\nell\scenes\basic_scene.cpp" />

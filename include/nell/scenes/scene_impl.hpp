@@ -1,10 +1,11 @@
 #pragma once
 #include <entt/entity/registry.hpp>
 #include <input.hpp>
-#include <scene.hpp>
 
 namespace nell
 {
+class Scene;
+
 class SceneImpl
 {
  public:
@@ -12,11 +13,12 @@ class SceneImpl
   virtual void populate(Scene *, entt::registry &) = 0;
   virtual void setup(Scene *, entt::registry &) = 0;
   virtual void resize(int w, int h) = 0;
-  virtual void update(const double &time, const double &delta_time,
+  virtual void update(Scene *scene, entt::registry &reg,
                       const input::NellInputList &input_list,
-                      entt::registry &reg) = 0;
-  virtual void render(const double &time, const double &delta_time,
-                      entt::registry &reg) = 0;
+                      const double &time, const double &delta_time) = 0;
+  virtual void render(Scene *scene, entt::registry &reg,
+                      entt::entity &camera_entity, const double &time,
+                      const double &delta_time) = 0;
 };
 
 }  // namespace nell

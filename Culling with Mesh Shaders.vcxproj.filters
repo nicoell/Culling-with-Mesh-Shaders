@@ -57,34 +57,25 @@
     <ClCompile Include="src\nell\utils\glfw_utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\nell\systems\freeflight_camera_system.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\nell\components\transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\nell\systems\model_import_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\nell\systems\callbacks\early_update_emitter.cpp">
+    <ClCompile Include="src\nell\components\basic_shading_objects.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\nell\systems\callbacks\fixed_update_emitter.cpp">
+    <ClCompile Include="src\nell\components\perspective_camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\nell\systems\callbacks\late_update_emitter.cpp">
+    <ClCompile Include="src\nell\systems\freeflight_controller_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\nell\systems\callbacks\post_render_emitter.cpp">
+    <ClCompile Include="src\nell\systems\camera_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\nell\systems\callbacks\render_emitter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\nell\systems\callbacks\update_emitter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\nell\systems\basic_shading_system.cpp">
+    <ClCompile Include="src\nell\scenes\basic_taskmeshshader_scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -96,9 +87,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\nell\systems\ui_entity_draw_system.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nell\components\opengl_program.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\nell\scene.hpp">
@@ -140,9 +128,6 @@
     <ClInclude Include="include\nell\components\mesh.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\nell\components\shaders.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\nell\scenes\scene_impl.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -155,13 +140,7 @@
     <ClInclude Include="include\nell\input.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\nell\systems\freeflight_camera_system.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\nell\components\transform.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nell\components\freeflight_camera.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\nell\components\model_source.hpp">
@@ -170,52 +149,25 @@
     <ClInclude Include="include\nell\systems\model_import_system.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\nell\components\opengl_mesh.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nell\systems\callbacks\early_update_callback.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nell\systems\callbacks\fixed_update_callback.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nell\systems\callbacks\late_update_callback.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nell\systems\callbacks\post_render_callback.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nell\systems\callbacks\render_callback.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nell\systems\callbacks\update_callback.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nell\systems\callbacks\callback_func_handle.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nell\systems\callbacks\early_update_emitter.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nell\systems\callbacks\fixed_update_emitter.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nell\systems\callbacks\update_emitter.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nell\systems\callbacks\render_emitter.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nell\systems\callbacks\post_render_emitter.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nell\systems\callbacks\late_update_emitter.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\nell\components\basic_shading_objects.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\nell\systems\basic_shading_system.hpp">
+    <ClInclude Include="include\nell\components\perspective_camera.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\nell\components\freeflight_controller.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\nell\systems\freeflight_controller_system.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\nell\systems\camera_system.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\nell\scenes\basic_taskmeshshader_scene.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\nell\components\entity_name.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

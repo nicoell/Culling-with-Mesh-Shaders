@@ -42,7 +42,7 @@ GLuint ShaderDefinition::buildShaderProgram()
   }
   const GLchar* shader_code_ptr = shader_code.c_str();
 
-  _program_id = glCreateShaderProgramv(GL_VERTEX_SHADER, 1, &shader_code_ptr);
+  _program_id = glCreateShaderProgramv(_shader_type, 1, &shader_code_ptr);
   GLint status;
   glGetProgramiv(_program_id, GL_LINK_STATUS, &status);
   if (status == GL_FALSE)

@@ -1,4 +1,4 @@
-#include <basic_shading_objects.hpp>
+#include <triangle_mesh.hpp>
 #include <camera_system.hpp>
 #include <cereal/archives/json.hpp>
 #include <freeflight_controller.hpp>
@@ -112,6 +112,7 @@ void Scene::init()
 
   pc.setAspect(_width, _height);
 
-  systems::importAssets(_registry);
+
+  //systems::importAssets(_registry);
 }
 }  // namespace nell

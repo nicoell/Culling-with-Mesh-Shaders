@@ -141,46 +141,72 @@ const GLfloat* Transform::getTransformationDirtyValuePtr()
 
 void Transform::drawImGui()
 {
-  glm::vec3 translation = _translation;
-  glm::vec3 scale = _scale;
-  glm::quat rotation = _rotation;
-  glm::vec3 euler_angles = glm::degrees(_imgui_euler_angles);
-  glm::vec3 forward = getForward();
-  glm::vec3 right = getRight();
-  glm::vec3 up = getUp();
-  if (ImGui::DragFloat3("Translation", glm::value_ptr(translation), 0.2f))
+  if (ImGui::TreeNode("Transform"))
   {
-    setTranslation(translation);
+    glm::vec3 translation = _translation;
+    glm::vec3 scale = _scale;
+    glm::quat rotation = _rotation;
+    glm::vec3 euler_angles = glm::degrees(_imgui_euler_angles);
+    glm::vec3 forward = getForward();
+    glm::vec3 right = getRight();
+    glm::vec3 up = getUp();
+    if (ImGui::DragFloat3("Translation", glm::value_ptr(translation), 0.2f))
+    {
+      setTranslation(translation);
+    }
+    if (ImGui::DragFloat3("Scale", glm::value_ptr(scale), 0.05f))
+    {
+      setScale(scale);
+    }
+    if (ImGui::DragFloat4("Quaternion", glm::value_ptr(rotation), 0.01f, -1.f,
+                          1.f))
+    {
+      rotation = glm::normalize(rotation);
+      setRotation(rotation);
+    }
+    if (ImGui::DragFloat3("Euler Angles", glm::value_ptr(euler_angles)))
+    {
+      setRotation(glm::radians(euler_angles));
+    }
+    if (ImGui::DragFloat3("Forward", glm::value_ptr(forward), 0.01f, -1.f, 1.f))
+    {
+      forward = glm::normalize(forward);
+      setForward(forward);
+    }
+    if (ImGui::DragFloat3("Right", glm::value_ptr(right), 0.01f, -1.f, 1.f))
+    {
+      right = glm::normalize(right);
+      setRight(right);
+    }
+    if (ImGui::DragFloat3("Up", glm::value_ptr(up), 0.01f, -1.f, 1.f))
+    {
+      up = glm::normalize(up);
+      setUp(up);
+    }
+    ImGui::TreePop();
   }
-  if (ImGui::DragFloat3("Scale", glm::value_ptr(scale), 0.05f))
-  {
-    setScale(scale);
-  }
-  if (ImGui::DragFloat4("Quaternion", glm::value_ptr(rotation), 0.01f, -1.f,
-                        1.f))
-  {
-    rotation = glm::normalize(rotation);
-    setRotation(rotation);
-  }
-  if (ImGui::DragFloat3("Euler Angles", glm::value_ptr(euler_angles)))
-  {
-    setRotation(glm::radians(euler_angles));
-  }
-  if (ImGui::DragFloat3("Forward", glm::value_ptr(forward), 0.01f, -1.f, 1.f))
-  {
-    forward = glm::normalize(forward);
-    setForward(forward);
-  }
-  if (ImGui::DragFloat3("Right", glm::value_ptr(right), 0.01f, -1.f, 1.f))
-  {
-    right = glm::normalize(right);
-    setRight(right);
-  }
-  if (ImGui::DragFloat3("Up", glm::value_ptr(up), 0.01f, -1.f, 1.f))
-  {
-    up = glm::normalize(up);
-    setUp(up);
-  }
+}
+
+bool Transform::operator==(const Transform& t2) const
+{
+  return (!_is_dirty || !t2.isDirty()) &&
+         _transformation == t2.getTransformationDirty();
+}
+
+bool Transform::operator==(const glm::mat4& t2) const
+{
+  return (!_is_dirty && _transformation == t2);
+}
+
+bool Transform::operator!=(const Transform& t2) const
+{
+  return (_is_dirty || t2.isDirty()) ||
+         _transformation != t2.getTransformationDirty();
+}
+
+bool Transform::operator!=(const glm::mat4& t2) const
+{
+  return (_is_dirty || _transformation != t2);
 }
 
 void Transform::update()

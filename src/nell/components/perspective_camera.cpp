@@ -78,4 +78,28 @@ void PerspectiveCamera::updateMatrices (comp::Transform &transform)
   //_view_matrix = glm::mat4_cast(transform.getRotationRef()) * transform.getTranslationRef();
   _view_projection_matrix = _projection_matrix * _view_matrix;
 }
+
+void PerspectiveCamera::drawImGui ()
+{
+  if (ImGui::TreeNode("Perspective Camera"))
+  {
+    float fovy = getFovY();
+    float aspect = getAspect();
+    float nearplane = getNearplane();
+    float farplane = getFarplane();
+
+    if (ImGui::SliderFloat("FOV Y", &fovy, 30.f, 90.0f))
+    {
+      setFovY(fovy);
+    }
+    ImGui::InputFloat("Aspect Ratio", &aspect, 0, 0, "%.3f",
+                      ImGuiInputTextFlags_ReadOnly);
+    if (ImGui::InputFloat("Near Plane", &nearplane) ||
+        ImGui::InputFloat("Far Plane", &farplane))
+    {
+      setNearAndFar(nearplane, farplane);
+    }
+    ImGui::TreePop();
+  }
+}
 }  // namespace nell::comp

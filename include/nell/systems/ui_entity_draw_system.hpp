@@ -10,7 +10,8 @@ void drawComponent(entt::registry &reg, entt::entity &entity)
 {
   if (auto *comp = reg.try_get<Component>(entity); comp)
   {
-    drawComponentImpl(*comp);
+    comp->drawImGui();
+    //drawComponentImpl(*comp);
   }
 }
 
@@ -21,7 +22,7 @@ void drawEntityBrowser(entt::registry &reg)
   ImGui::Begin("Entity Browser");
   reg.each([&](auto entity) {
     auto name = std::string("Entity %d");
-    if (auto *comp = reg.try_get<nell::comp::EntityName>(entity); comp)
+    if (comp::EntityName *comp = reg.try_get<comp::EntityName>(entity); comp)
     {
       name = comp->name;
     }

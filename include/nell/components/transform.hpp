@@ -4,10 +4,11 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
+#include <ui_drawable.hpp>
 
 namespace nell::comp
 {
-struct Transform
+struct Transform : UiDrawable
 {
   static glm::quat getFromToRotation(glm::vec3 from, glm::vec3 to);
 
@@ -49,29 +50,12 @@ struct Transform
   inline static const glm::vec3 up = glm::vec3(0, 1, 0);
   inline static const glm::vec3 right = glm::vec3(1, 0, 0);
 
-  void drawImGui();
+  void drawImGui() override;
 
-  bool operator==(const Transform& t2) const
-  {
-    return (!_is_dirty || !t2.isDirty()) &&
-           _transformation == t2.getTransformationDirty();
-  }
-
-  bool operator==(const glm::mat4& t2) const
-  {
-    return (!_is_dirty && _transformation == t2);
-  }
-
-  bool operator!=(const Transform& t2) const
-  {
-    return (_is_dirty || t2.isDirty()) ||
-           _transformation != t2.getTransformationDirty();
-  }
-
-  bool operator!=(const glm::mat4& t2) const
-  {
-    return (_is_dirty || _transformation != t2);
-  }
+  bool operator==(const Transform& t2) const;
+  bool operator==(const glm::mat4& t2) const;
+  bool operator!=(const Transform& t2) const;
+  bool operator!=(const glm::mat4& t2) const;
 
  private:
   void update();
@@ -100,13 +84,5 @@ void serialize(Archive &archive, Transform &transform)
   //archive(transform.);
 }*/
 
-inline void drawComponentImpl(Transform& transform)
-{
-  if (ImGui::TreeNode("Transform"))
-  {
-    transform.drawImGui();
-    ImGui::TreePop();
-  }
-}
 
 }  // namespace nell::comp

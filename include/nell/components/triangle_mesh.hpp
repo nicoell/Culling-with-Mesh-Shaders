@@ -1,26 +1,22 @@
 #pragma once
+#include <assimp/postprocess.h>
+#include <buffer_objects.hpp>
 #include <glad/glad.h>
-
+#include <glm/glm.hpp>
+#include <assimp/scene.h>
 #include <mesh.hpp>
+#include <ui_drawable.hpp>
+#include <vector>
 
 namespace nell::comp
 {
-// TODO: Refactor this together with mesh struct.
-
-struct BasicShadingObjects
+struct TriangleMesh final : Mesh<TriangleMesh>, UiDrawable
 {
-  GLuint vertex_buffer_object;
-  GLuint normal_buffer_object;
-  GLuint index_buffer_object;
-};
+  explicit TriangleMesh(aiMesh* ai_mesh);
 
-struct BasicShadingMesh final : Mesh
-{
   std::vector<glm::vec3> vertices;
   std::vector<glm::vec3> normals;
-  std::vector<unsigned int> indices;
-
-  BasicShadingObjects bs_objects;
+  std::vector <unsigned int> indices;
 
   size_t getVerticesSize() const { return vertices.size() * getVertexSizeT(); }
   size_t getNormalsSize() const { return normals.size() * getNormalSizeT(); }
@@ -36,7 +32,8 @@ struct BasicShadingMesh final : Mesh
   static GLenum getVertexType() { return GL_FLOAT; }
   static GLenum getNormalType() { return GL_FLOAT; }
 
-  void drawImGui() const override;
+  void drawImGui() override;
+  static unsigned getImportFlags () { return aiProcess_GenSmoothNormals;}
 };
 
 

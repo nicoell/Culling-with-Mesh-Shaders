@@ -16,11 +16,13 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #include <spdlog/spdlog.h>
+
+#include <input.hpp>
 #include <map>
 #include <nell/scene.hpp>
 #include <nell/scenes/basic_scene.hpp>
+#include <nell/scenes/mesh_shader_scene.hpp>
 #include <nell/scenes/scene_impl.hpp>
-#include <input.hpp>
 
 namespace nell
 {
@@ -43,9 +45,10 @@ class Context
   inline static std::map<std::string, std::function<SceneImpl *()>>
       _scene_definition_functions = {
           {"Basic Scene", []() { return new BasicScene(); }},
-          {"Test Scene", []() { return new BasicScene(); }}};
+          {"Basic MeshShader Scene",
+           []() { return new MeshShaderScene(); }}};
   static void glfwErrorCallback(int error, const char *description);
- 
+
   static void logGlDebugMessage(GLenum source, GLenum type, GLuint id,
                                 GLenum severity, GLsizei length,
                                 const GLchar *message, const void *param);

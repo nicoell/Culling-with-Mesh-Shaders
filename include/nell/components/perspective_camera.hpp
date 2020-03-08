@@ -1,13 +1,13 @@
 #pragma once
 #include <glad.h>
 #include <imgui/misc/imgui_stdlib.h>
-
+#include <ui_drawable.hpp>
 #include <glm/glm.hpp>
 #include <transform.hpp>
 
 namespace nell::comp
 {
-struct PerspectiveCamera
+struct PerspectiveCamera : UiDrawable
 {
   PerspectiveCamera(float fovy = 60, float aspect = 1, float nearplane = 5,
                     float farplane = 1000)
@@ -42,6 +42,7 @@ struct PerspectiveCamera
 
   void updateMatrices(comp::Transform&);
 
+  void drawImGui () override;
  private:
   float _fovy;
   float _aspect;
@@ -59,27 +60,4 @@ struct PerspectiveCamera
   inline static const float nearfar_epsilon = 0.0001f;
 };
 
-inline void drawComponentImpl(PerspectiveCamera& perspective_camera)
-{
-  if (ImGui::TreeNode("Perspective Camera"))
-  {
-    float fovy = perspective_camera.getFovY();
-    float aspect = perspective_camera.getAspect();
-    float nearplane = perspective_camera.getNearplane();
-    float farplane = perspective_camera.getFarplane();
-
-    if (ImGui::SliderFloat("FOV Y", &fovy, 30.f, 90.0f))
-    {
-      perspective_camera.setFovY(fovy);
-    }
-    ImGui::InputFloat("Aspect Ratio", &aspect, 0, 0, "%.3f",
-                      ImGuiInputTextFlags_ReadOnly);
-    if (ImGui::InputFloat("Near Plane", &nearplane) ||
-        ImGui::InputFloat("Far Plane", &farplane))
-    {
-      perspective_camera.setNearAndFar(nearplane, farplane);
-    }
-    ImGui::TreePop();
-  }
-}
 }  // namespace nell::comp

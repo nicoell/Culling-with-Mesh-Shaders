@@ -3,7 +3,7 @@
 #include <mesh.hpp>
 #include <model_import_system.hpp>
 #include <nell/definitions.hpp>
-#include <nell/scenes/basic_scene.hpp>
+#include <nell/scenes/mesh_shader_scene.hpp>
 #include <transform.hpp>
 #include <triangle_mesh.hpp>
 #include <triangle_mesh_draw_elements_objects.hpp>
@@ -23,7 +23,7 @@ static constexpr auto kNormalBindloc = 1;
 
 namespace nell
 {
-BasicScene::BasicScene()
+MeshShaderScene::MeshShaderScene()
     : _basic_vertex_shader(
           0, GL_VERTEX_SHADER,
           std::string(kShaderPath) + std::string("basic_shader.vert"),
@@ -44,7 +44,7 @@ BasicScene::BasicScene()
                      static_cast<GLuint>(_basic_fragment_shader));
 }
 
-void BasicScene::populate(Scene *scene, entt::registry &reg)
+void MeshShaderScene::populate(Scene *scene, entt::registry &reg)
 {
   auto entity = reg.create();
   reg.assign<comp::EntityName>(entity, "Armadillo");
@@ -64,7 +64,7 @@ void BasicScene::populate(Scene *scene, entt::registry &reg)
  * those subsystems.
  */
 
-void BasicScene::setup(Scene *scene, entt::registry &reg)
+void MeshShaderScene::setup(Scene *scene, entt::registry &reg)
 {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // ### Setup VAO and Mesh Buffers ###
@@ -124,18 +124,18 @@ void BasicScene::setup(Scene *scene, entt::registry &reg)
     // glVertexArrayElementBuffer(_vertex_array_object, ibo);
   }
 }
-void BasicScene::resize(int w, int h) {}
+void MeshShaderScene::resize(int w, int h) {}
 
-void BasicScene::update(Scene *scene, entt ::registry &reg,
-                        const input::NellInputList &input_list,
-                        const double &time, const double &delta_time)
+void MeshShaderScene::update(Scene *scene, entt ::registry &reg,
+                             const input::NellInputList &input_list,
+                             const double &time, const double &delta_time)
 {
   scene->drawComponentImGui<comp::TriangleMesh,
                             comp::TriangleMeshDrawElementsObjects>();
 }
-void BasicScene::render(Scene *scene, entt::registry &reg,
-                        entt::entity &camera_entity, const double &time,
-                        const double &delta_time)
+void MeshShaderScene::render(Scene *scene, entt::registry &reg,
+                             entt::entity &camera_entity, const double &time,
+                             const double &delta_time)
 {
   auto perspective_camera = reg.get<comp::PerspectiveCamera>(camera_entity);
 

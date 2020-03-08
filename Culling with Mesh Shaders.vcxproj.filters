@@ -60,12 +60,6 @@
     <ClCompile Include="src\nell\components\transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\nell\systems\model_import_system.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\nell\components\basic_shading_objects.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\nell\components\perspective_camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -75,7 +69,7 @@
     <ClCompile Include="src\nell\systems\camera_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\nell\scenes\basic_taskmeshshader_scene.cpp">
+    <ClCompile Include="src\nell\components\triangle_mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -149,9 +143,6 @@
     <ClInclude Include="include\nell\systems\model_import_system.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\nell\components\basic_shading_objects.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\nell\components\perspective_camera.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -164,10 +155,22 @@
     <ClInclude Include="include\nell\systems\camera_system.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\nell\scenes\basic_taskmeshshader_scene.hpp">
+    <ClInclude Include="include\nell\components\entity_name.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\nell\components\entity_name.hpp">
+    <ClInclude Include="include\nell\components\buffer_objects.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\nell\components\ui_drawable.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\nell\components\triangle_mesh.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\nell\components\triangle_mesh_draw_elements_objects.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\nell\scenes\mesh_shader_scene.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -175,5 +178,8 @@
     <None Include="FrameworkOverview.cd" />
     <None Include="resources\shaders\basic_shader.vert" />
     <None Include="resources\shaders\basic_shader.frag" />
+    <None Include="resources\shaders\basic_shader.mesh" />
+    <None Include="resources\shaders\drawmeshlet.mesh" />
+    <None Include="src\nell\scenes\mesh_shader_scene.cpp" />
   </ItemGroup>
 </Project>

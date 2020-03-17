@@ -141,6 +141,7 @@
     <ClCompile Include="src\imgui\impl\imgui_impl_opengl3.cpp" />
     <ClCompile Include="src\imgui\misc\imgui_stdlib.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\nell\components\meshlet_triangle_mesh.cpp" />
     <ClCompile Include="src\nell\components\triangle_mesh.cpp" />
     <ClCompile Include="src\nell\components\perspective_camera.cpp" />
     <ClCompile Include="src\nell\components\transform.cpp" />
@@ -161,9 +162,11 @@
     <ClInclude Include="include\imgui\impl\imgui_impl_opengl3.h" />
     <ClInclude Include="include\imgui\misc\imgui_stdlib.h" />
     <ClInclude Include="include\KHR\khrplatform.h" />
+    <ClInclude Include="include\nell\components\meshlet_triangle_mesh.hpp" />
+    <ClInclude Include="include\nell\components\relationship_workable.hpp" />
     <ClInclude Include="include\nell\components\triangle_mesh.hpp" />
     <ClInclude Include="include\nell\components\buffer_objects.hpp" />
-    <ClInclude Include="include\nell\components\child_link.hpp" />
+    <ClInclude Include="include\nell\components\child_parent_relationship.hpp" />
     <ClInclude Include="include\nell\components\entity_name.hpp" />
     <ClInclude Include="include\nell\components\freeflight_controller.hpp" />
     <ClInclude Include="include\nell\components\mesh.hpp" />
@@ -171,6 +174,7 @@
     <ClInclude Include="include\nell\components\perspective_camera.hpp" />
     <ClInclude Include="include\nell\components\transform.hpp" />
     <ClInclude Include="include\nell\components\triangle_mesh_draw_elements_objects.hpp" />
+    <ClInclude Include="include\nell\components\triangle_mesh_draw_meshtasks_objects.hpp" />
     <ClInclude Include="include\nell\components\ui_drawable.hpp" />
     <ClInclude Include="include\nell\definitions.hpp" />
     <ClInclude Include="include\nell\input.hpp" />
@@ -182,6 +186,7 @@
     <ClInclude Include="include\nell\systems\camera_system.hpp" />
     <ClInclude Include="include\nell\systems\model_import_system.hpp" />
     <ClInclude Include="include\nell\systems\freeflight_controller_system.hpp" />
+    <ClInclude Include="include\nell\systems\relationship_work_system.hpp" />
     <ClInclude Include="include\nell\systems\ui_entity_draw_system.hpp" />
     <ClInclude Include="include\utils\glfw_utils.hpp" />
     <ClCompile Include="src\nell\scenes\basic_scene.cpp" />
@@ -194,7 +199,7 @@
     <None Include="resources\shaders\basic_shader.mesh" />
     <None Include="resources\shaders\basic_shader.vert" />
     <None Include="resources\shaders\drawmeshlet.mesh" />
-    <None Include="src\nell\scenes\mesh_shader_scene.cpp" />
+    <ClCompile Include="src\nell\scenes\mesh_shader_scene.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

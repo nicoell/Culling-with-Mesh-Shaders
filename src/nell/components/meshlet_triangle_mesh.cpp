@@ -1,8 +1,8 @@
-#include <components/triangle_mesh.hpp>
+#include <nell/components/meshlet_triangle_mesh.hpp>
 
 namespace nell::comp
 {
-TriangleMesh::TriangleMesh (aiMesh *ai_mesh)
+MeshletTriangleMesh::MeshletTriangleMesh(aiMesh *ai_mesh)
 {
   vertices.reserve(ai_mesh->mNumVertices);
   if (ai_mesh->HasNormals()) normals.reserve(ai_mesh->mNumVertices);
@@ -30,7 +30,7 @@ TriangleMesh::TriangleMesh (aiMesh *ai_mesh)
   }
 }
 
-void TriangleMesh::drawImGui()
+void MeshletTriangleMesh::drawImGui()
 {
   ImGui::Text("%s: %d", "Vertices", vertices.size());
   ImGui::Text("%s: %d", "Normals", normals.size());

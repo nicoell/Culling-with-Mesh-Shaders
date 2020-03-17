@@ -1,22 +1,23 @@
 #pragma once
 #include <assimp/postprocess.h>
-#include <buffer_objects.hpp>
-#include <glad/glad.h>
-#include <glm/glm.hpp>
 #include <assimp/scene.h>
+#include <glad/glad.h>
+
+#include <buffer_objects.hpp>
+#include <glm/glm.hpp>
 #include <mesh.hpp>
 #include <ui_drawable.hpp>
 #include <vector>
 
 namespace nell::comp
 {
-struct TriangleMesh final : Mesh<TriangleMesh>, UiDrawable
+struct MeshletTriangleMesh final : Mesh<MeshletTriangleMesh>, UiDrawable
 {
-  explicit TriangleMesh(aiMesh* ai_mesh);
+  explicit MeshletTriangleMesh(aiMesh* ai_mesh);
 
   std::vector<glm::vec3> vertices;
   std::vector<glm::vec3> normals;
-  std::vector <unsigned int> indices;
+  std::vector<unsigned int> indices;
 
   size_t getVerticesSize() const { return vertices.size() * getVertexSizeT(); }
   size_t getNormalsSize() const { return normals.size() * getNormalSizeT(); }
@@ -33,14 +34,7 @@ struct TriangleMesh final : Mesh<TriangleMesh>, UiDrawable
   static GLenum getNormalType() { return GL_FLOAT; }
 
   void drawImGui() override;
-  static unsigned getImportFlags()
-  {
-    return (aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices |
-            aiProcess_ImproveCacheLocality | aiProcess_FlipWindingOrder |
-            aiProcess_Triangulate | aiProcess_PreTransformVertices);
-  }
+  static unsigned getImportFlags() { return aiProcess_GenSmoothNormals; }
 };
-
-
 
 }  // namespace nell::comp

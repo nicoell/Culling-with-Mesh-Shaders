@@ -5,6 +5,7 @@
 #include <nell/components/model_source.hpp>
 #include <nell/components/transform.hpp>
 #include <perspective_camera.hpp>
+#include <relationship_work_system.hpp>
 #include <scene_impl.hpp>
 #include <transform.hpp>
 #include <ui_entity_draw_system.hpp>
@@ -36,6 +37,7 @@ class Scene final
   std::string _scene_archive_name;
   entt::registry _registry;
   std::unique_ptr<SceneImpl> _scene_impl;
+  systems::RelationshipProcessor _relationship_processor;
 
   int _width;
   int _height;
@@ -48,8 +50,9 @@ class Scene final
 template <typename... Component>
 void Scene::drawComponentImGui()
 {
-  systems::drawEntityBrowser<comp::Transform, comp::FreeflightController,
+  systems::drawEntityComponentHierarchyUi<
+      comp::Transform, comp::FreeflightController,
                              comp::PerspectiveCamera, comp::ModelSource,
-                             Component...>(_registry);
+                             Component...>(_registry, "Hierarchy Browser");
 }
 }  // namespace nell

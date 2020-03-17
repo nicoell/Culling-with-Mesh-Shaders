@@ -76,6 +76,9 @@ class Context
   const ContextOptions _options;
   int _width;
   int _height;
+
+  gl_utils::ParameterQueries _parameter_queries;
+
 };  // namespace nell
 
 }  // namespace nell

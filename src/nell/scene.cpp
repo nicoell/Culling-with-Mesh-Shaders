@@ -76,6 +76,8 @@ void Scene::update(const double &time, const double &delta_time,
   systems::updatePerspectiveCamera(_registry, _camera);
 
   _scene_impl->update(this, _registry, input_list, time, delta_time);
+
+  _relationship_processor.processRelationshipWorkTopDown<comp::Transform>(_registry);
 }
 void Scene::render(const double &time, const double &delta_time)
 {

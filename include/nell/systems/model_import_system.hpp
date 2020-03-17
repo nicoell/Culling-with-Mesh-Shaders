@@ -1,35 +1,87 @@
 #pragma once
 #include <assimp/scene.h>
+
 #include <assimp/Importer.hpp>
 #include <entity_name.hpp>
 #include <entt/entt.hpp>
-
-#include <nell/definitions.hpp>
+#include <nell/components/child_parent_relationship.hpp>
 #include <nell/components/model_source.hpp>
-#include <transform.hpp>
+#include <nell/components/transform.hpp>
+#include <nell/definitions.hpp>
+#include <queue>
 
 namespace nell::systems
 {
-//void importAssets(entt::registry &);
-
-/*template <typename MeshComponent>
-void processMesh(entt::registry &reg, entt::entity &entity, aiMesh *ai_mesh)
+template <typename... MeshComponent>
+void processNode(entt::registry &reg, entt::entity &parent_entity,
+                 entt::entity &current_entity, const aiScene *scene,
+                 aiNode *node)
 {
-  auto &mesh_comp = reg.assign<MeshComponent>(entity, ai_mesh);
+  // Name
+  auto node_name = std::string(node->mName.C_Str());
+  node_name += ":Node";
+  reg.assign<comp::EntityName>(current_entity, node_name);
+
+  // Parent Link
+  auto &parent_link = reg.assign<comp::ParentLink>(current_entity);
+  parent_link.parent = parent_entity;
+
+  // Transform
+  {
+    auto &tf = reg.assign<comp::Transform>(current_entity);
+
+    aiVector3t<float> ai_scaling;
+    aiQuaterniont<float> ai_rotation;
+    aiVector3t<float> ai_position;
+
+    node->mTransformation.Decompose(ai_scaling, ai_rotation, ai_position);
+    const auto scaling = glm::vec3(ai_scaling.x, ai_scaling.y, ai_scaling.z);
+    const auto quat =
+        glm::quat(ai_rotation.w, ai_rotation.x, ai_rotation.y, ai_rotation.z);
+    const auto translation =
+        glm::vec3(ai_position.x, ai_position.y, ai_position.z);
+
+    tf.setScale(scaling);
+    tf.setTranslation(translation);
+    tf.setRotation(quat);
+  }
+  if (node->mNumMeshes + node->mNumChildren > 0)
+  {
+    std::vector<entt::entity> children;
+    children.reserve(node->mNumMeshes + node->mNumChildren);
+
+    for (unsigned int i_mesh = 0; i_mesh < node->mNumMeshes; i_mesh++)
+    {
+      auto mesh_entity_name = node_name;
+      mesh_entity_name += ":";
+      mesh_entity_name += std::to_string(i_mesh);
+
+      auto mesh_entity = reg.create();
+      reg.assign<comp::EntityName>(mesh_entity, mesh_entity_name);
+      reg.assign<comp::Transform>(mesh_entity);
+      auto &mesh_parent_link = reg.assign<comp::ParentLink>(mesh_entity);
+      mesh_parent_link.parent = current_entity;
+
+      children.push_back(mesh_entity);
+
+      aiMesh *ai_mesh = scene->mMeshes[node->mMeshes[i_mesh]];
+
+      (reg.assign<MeshComponent>(mesh_entity, ai_mesh), ...);
+    }
+
+    for (unsigned int k = 0; k < node->mNumChildren; k++)
+    {
+      auto child_entity = reg.create();
+      children.push_back(child_entity);
+
+      processNode<MeshComponent...>(reg, current_entity, child_entity, scene,
+                                    node->mChildren[k]);
+    }
+
+    auto &child_link = reg.assign<comp::ChildLink>(current_entity);
+    child_link.children = children;
+  }
 }
-
-template <typename MeshComponent>
-void initMeshComponent(entt::registry &reg, entt::entity &entity)
-{
-  reg.assign_or_replace<MeshComponent>(entity);
-}
-
-template <typename MeshComponent>
-unsigned requestImportFlags()
-{
-  unsigned flags = MeshComponent::requestImportFlags();
-  return flags;
-}*/
 
 template <typename... MeshComponent>
 void importModelsFromSource(entt::registry &reg)
@@ -40,14 +92,14 @@ void importModelsFromSource(entt::registry &reg)
 
   for (auto entity : model_source_view)
   {
-    auto [entity_name, asset_source_comp] = model_source_view.get <comp::EntityName,
-         comp::ModelSource>(entity);
+    auto [entity_name, asset_source_comp] =
+        model_source_view.get<comp::EntityName, comp::ModelSource>(entity);
 
     auto parent_name = entity_name.name;
 
     unsigned combined_flags = 0;
-    //combined_flags |= (requestImportFlags<MeshComponent>(), ...);
-    combined_flags = (MeshComponent::requestImportFlags() || ...);
+    // combined_flags |= (requestImportFlags<MeshComponent>(), ...);
+    combined_flags = (MeshComponent::requestImportFlags() | ...);
 
     const aiScene *scene =
         importer.ReadFile(kAssetPath + asset_source_comp.path, combined_flags);
@@ -59,20 +111,13 @@ void importModelsFromSource(entt::registry &reg)
       continue;
     }
 
-    for (unsigned int i_mesh = 0; i_mesh < scene->mNumMeshes; i_mesh++)
-    {
-      auto child_entity = reg.create();
-      reg.assign<comp::EntityName>(child_entity, parent_name + ":" + std::to_string(i_mesh));
-      reg.assign<comp::Transform>(child_entity);
+    auto &child_link = reg.assign<comp::ChildLink>(entity);
 
-      //TODO: attach child to parent for transform
+    auto child_entity = reg.create();
+    child_link.children.push_back(child_entity);
 
-      aiMesh *ai_mesh = scene->mMeshes[i_mesh];
-      (reg.assign<MeshComponent>(child_entity, ai_mesh), ...);
-
-      //(initMeshComponent<MeshComponent>(reg, child_entity), ...);
-      //(processMesh<MeshComponent>(reg, entity, ai_mesh), ...);
-    }
+    processNode<MeshComponent...>(reg, entity, child_entity, scene,
+                                  scene->mRootNode);
   }
 }
 

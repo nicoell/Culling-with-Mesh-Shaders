@@ -46,11 +46,21 @@ BasicScene::BasicScene()
 
 void BasicScene::populate(Scene *scene, entt::registry &reg)
 {
-  auto entity = reg.create();
-  reg.assign<comp::EntityName>(entity, "Armadillo");
-  auto &asp = reg.assign<comp::ModelSource>(entity);
-  auto &tf = reg.assign<comp::Transform>(entity);
-  asp.path = "Armadillo.ply";
+  {
+    auto entity = reg.create();
+    reg.assign<comp::EntityName>(entity, "Armadillo");
+    auto &asp = reg.assign<comp::ModelSource>(entity);
+    auto &tf = reg.assign<comp::Transform>(entity);
+    asp.path = "Armadillo.ply";
+  }
+
+   {
+    auto entity = reg.create();
+    reg.assign<comp::EntityName>(entity, "Sponza");
+    auto &asp = reg.assign<comp::ModelSource>(entity);
+    auto &tf = reg.assign<comp::Transform>(entity);
+    asp.path = "sponza.obj";
+  }
 
   systems::importModelsFromSource<comp::TriangleMesh>(reg);
 }

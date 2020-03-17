@@ -39,7 +39,7 @@ Transform::Transform()
     : _translation(0),
       _rotation(),
       _scale(1),
-      _transformation(1),
+      _local_transformation(1),
       _imgui_euler_angles(0, 0, 0),
       _is_dirty(true)
 {
@@ -51,7 +51,7 @@ Transform::Transform(const glm::vec3& translation = glm::vec3(0),
     : _translation(translation),
       _rotation(rotation),
       _scale(scale),
-      _transformation(1),
+      _local_transformation(1),
       _imgui_euler_angles(0, 0, 0),
       _is_dirty(true)
 {
@@ -120,23 +120,31 @@ glm::vec3& Transform::getScaleRef() { return _scale; }
 glm::vec3 Transform::getTranslation() const { return _translation; }
 glm::quat Transform::getRotation() const { return _rotation; }
 
-glm::mat4 Transform::getTransformation()
+glm::mat4 Transform::getLocalTransformation()
 {
   update();
-  return _transformation;
+  return _local_transformation;
 }
 
-glm::mat4 Transform::getTransformationDirty() const { return _transformation; }
+glm::mat4 Transform::getLocalTransformationDirty() const
+{
+  return _local_transformation;
+}
+
+glm::mat4 Transform::getTransformation () const
+{
+  return _transformation;
+}
 
 const GLfloat* Transform::getTransformationValuePtr()
 {
   update();
-  return glm::value_ptr(_transformation);
+  return glm::value_ptr(_local_transformation);
 }
 
 const GLfloat* Transform::getTransformationDirtyValuePtr()
 {
-  return glm::value_ptr(_transformation);
+  return glm::value_ptr(_local_transformation);
 }
 
 void Transform::drawImGui()
@@ -187,36 +195,49 @@ void Transform::drawImGui()
   }
 }
 
+void Transform::processWorkFromParent(Transform* parent_component)
+{
+  if (parent_component)
+  {
+    _transformation =
+        parent_component->getTransformation() * getLocalTransformation();
+  } else
+  {
+    _transformation = getLocalTransformation();
+  }
+}
+
 bool Transform::operator==(const Transform& t2) const
 {
   return (!_is_dirty || !t2.isDirty()) &&
-         _transformation == t2.getTransformationDirty();
+         _local_transformation == t2.getLocalTransformationDirty();
 }
 
 bool Transform::operator==(const glm::mat4& t2) const
 {
-  return (!_is_dirty && _transformation == t2);
+  return (!_is_dirty && _local_transformation == t2);
 }
 
 bool Transform::operator!=(const Transform& t2) const
 {
   return (_is_dirty || t2.isDirty()) ||
-         _transformation != t2.getTransformationDirty();
+         _local_transformation != t2.getLocalTransformationDirty();
 }
 
 bool Transform::operator!=(const glm::mat4& t2) const
 {
-  return (_is_dirty || _transformation != t2);
+  return (_is_dirty || _local_transformation != t2);
 }
 
-void Transform::update()
+inline void Transform::update()
 {
   if (_is_dirty)
   {
     // Cumulate translation, rotation and scale
     auto mat = glm::translate(_translation);
     mat = mat * glm::toMat4(_rotation);
-    _transformation = glm::scale(mat, _scale);
+    _local_transformation = glm::scale(mat, _scale);
+    // Insert system here to trigger inclusion of child_parent_relationship
     _is_dirty = false;
   }
 }

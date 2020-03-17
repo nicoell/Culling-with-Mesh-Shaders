@@ -4,11 +4,12 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
+#include <relationship_workable.hpp>
 #include <ui_drawable.hpp>
 
 namespace nell::comp
 {
-struct Transform : UiDrawable
+struct Transform : UiDrawable, RelationshipWorkable<Transform>
 {
   static glm::quat getFromToRotation(glm::vec3 from, glm::vec3 to);
 
@@ -34,8 +35,9 @@ struct Transform : UiDrawable
   glm::quat getRotation() const;
   glm::vec3 getScale() const;
 
-  glm::mat4 getTransformation();
-  glm::mat4 getTransformationDirty() const;
+  glm::mat4 getLocalTransformation();
+  glm::mat4 getLocalTransformationDirty() const;
+  glm::mat4 getTransformation() const;
 
   glm::vec3& getTranslationRef();
   glm::quat& getRotationRef();
@@ -51,6 +53,7 @@ struct Transform : UiDrawable
   inline static const glm::vec3 right = glm::vec3(1, 0, 0);
 
   void drawImGui() override;
+  void processWorkFromParent(Transform* parent_component) override;
 
   bool operator==(const Transform& t2) const;
   bool operator==(const glm::mat4& t2) const;
@@ -58,13 +61,14 @@ struct Transform : UiDrawable
   bool operator!=(const glm::mat4& t2) const;
 
  private:
-  void update();
+  inline void update();
   void updateEulerAngles();
 
   glm::vec3 _translation;
   glm::quat _rotation;
   glm::vec3 _scale;
 
+  glm::mat4 _local_transformation;
   glm::mat4 _transformation;
   glm::vec3 _imgui_euler_angles;
 
@@ -83,6 +87,5 @@ void serialize(Archive &archive, Transform &transform)
 {
   //archive(transform.);
 }*/
-
 
 }  // namespace nell::comp

@@ -72,6 +72,12 @@
     <ClCompile Include="src\nell\components\triangle_mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\nell\scenes\mesh_shader_scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\nell\components\meshlet_triangle_mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\nell\context.hpp">
@@ -114,9 +120,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\nell\definitions.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nell\components\child_link.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\nell\components\mesh.hpp">
@@ -173,6 +176,21 @@
     <ClInclude Include="include\nell\scenes\mesh_shader_scene.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\nell\components\triangle_mesh_draw_meshtasks_objects.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\nell\components\meshlet_triangle_mesh.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\nell\components\child_parent_relationship.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\nell\systems\relationship_work_system.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\nell\components\relationship_workable.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FrameworkOverview.cd" />
@@ -180,6 +198,5 @@
     <None Include="resources\shaders\basic_shader.frag" />
     <None Include="resources\shaders\basic_shader.mesh" />
     <None Include="resources\shaders\drawmeshlet.mesh" />
-    <None Include="src\nell\scenes\mesh_shader_scene.cpp" />
   </ItemGroup>
 </Project>

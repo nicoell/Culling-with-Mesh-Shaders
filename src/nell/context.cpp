@@ -59,7 +59,6 @@ Context::Context(ContextOptions creation_options)
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // Init Framework specifics: Scene
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  
 }
 
 void Context::run()
@@ -128,7 +127,7 @@ void Context::logGlDebugMessage(GLenum source, GLenum type, GLuint id,
       break;
     default:
       loglevel = spdlog::level::info;
-      return; //
+      return;  //
       break;
   }
 
@@ -206,11 +205,11 @@ void Context::mouseButtonCallback(GLFWwindow* window, int button, int action,
 void Context::scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
   static_cast<Context*>(glfwGetWindowUserPointer(window))
-      ->_input_list.emplace_back<input::NellInputScroll>(
-          {xoffset, yoffset});
+      ->_input_list.emplace_back<input::NellInputScroll>({xoffset, yoffset});
 }
 
-void Context::cursorPosCallback (GLFWwindow *window, double xpos, double ypos) {
+void Context::cursorPosCallback(GLFWwindow* window, double xpos, double ypos)
+{
   static_cast<Context*>(glfwGetWindowUserPointer(window))
       ->_input_list.emplace_back<input::NellInputCursorPos>({xpos, ypos});
 }
@@ -223,13 +222,14 @@ void Context::beginUiFrame()
 }
 
 void Context::loadScene(
-    const std::pair<const std::string, std::function<SceneImpl*()>> &scene_impl)
+    const std::pair<const std::string, std::function<SceneImpl*()>>& scene_impl)
 {
   if (_scene) _scene.reset();
   glfwSetWindowTitle(
       _window, (_options.window_title + " : " + scene_impl.first).c_str());
   _scene = std::make_unique<Scene>(
-      scene_impl.first, std::unique_ptr<SceneImpl>(scene_impl.second()), _width, _height);
+      scene_impl.first, std::unique_ptr<SceneImpl>(scene_impl.second()), _width,
+      _height);
 }
 
 std::string Context::loadSceneArchiveFile(const std::string& archive_filename)
@@ -257,6 +257,7 @@ void Context::updateUiFrame()
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   bool showSaveSettingsPopup = false;
   bool showLoadSettingsPopup = false;
+  static bool gl_parameter_window = false;
   if (ImGui::BeginMainMenuBar())
   {
     if (ImGui::BeginMenu("Menu"))
@@ -296,6 +297,14 @@ void Context::updateUiFrame()
       {
         if (_scene) _scene.reset();
         glfwSetWindowTitle(_window, _options.window_title.c_str());
+      }
+      ImGui::EndMenu();
+    }
+    if (ImGui::BeginMenu("View"))
+    {
+      if (ImGui::MenuItem("Gl Parameter Query", 0, &gl_parameter_window))
+      {
+        // showGlParameterPopup = true;
       }
       ImGui::EndMenu();
     }
@@ -348,6 +357,191 @@ void Context::updateUiFrame()
       ImGui::CloseCurrentPopup();
     }
     ImGui::EndPopup();
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // Show GL Mesh Task Parameters
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (gl_parameter_window)
+  {
+    ImGui::Begin("Gl Parameter Query", &gl_parameter_window);
+    const auto col = ImGui::GetStyleColorVec4(ImGuiCol_ButtonActive);
+    ImGui::Text("GL_MAX_MESH_UNIFORM_BLOCKS_NV");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col, _parameter_queries[GL_MAX_MESH_UNIFORM_BLOCKS_NV].c_str());
+
+    ImGui::Text("GL_MAX_MESH_TEXTURE_IMAGE_UNITS_NV");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col, _parameter_queries[GL_MAX_MESH_TEXTURE_IMAGE_UNITS_NV].c_str());
+
+    ImGui::Text("GL_MAX_MESH_IMAGE_UNIFORMS_NV");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col, _parameter_queries[GL_MAX_MESH_IMAGE_UNIFORMS_NV].c_str());
+
+    ImGui::Text("GL_MAX_MESH_UNIFORM_COMPONENTS_NV");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col, _parameter_queries[GL_MAX_MESH_UNIFORM_COMPONENTS_NV].c_str());
+
+    ImGui::Text("GL_MAX_MESH_ATOMIC_COUNTER_BUFFERS_NV");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col, _parameter_queries[GL_MAX_MESH_ATOMIC_COUNTER_BUFFERS_NV].c_str());
+
+    ImGui::Text("GL_MAX_MESH_ATOMIC_COUNTERS_NV");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col, _parameter_queries[GL_MAX_MESH_ATOMIC_COUNTERS_NV].c_str());
+
+    ImGui::Text("GL_MAX_MESH_SHADER_STORAGE_BLOCKS_NV");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col, _parameter_queries[GL_MAX_MESH_SHADER_STORAGE_BLOCKS_NV].c_str());
+
+    ImGui::Text("GL_MAX_COMBINED_MESH_UNIFORM_COMPONENTS_NV");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col,
+        _parameter_queries[GL_MAX_COMBINED_MESH_UNIFORM_COMPONENTS_NV].c_str());
+
+    ImGui::Text("GL_MAX_TASK_UNIFORM_BLOCKS_NV");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col, _parameter_queries[GL_MAX_TASK_UNIFORM_BLOCKS_NV].c_str());
+
+    ImGui::Text("GL_MAX_TASK_TEXTURE_IMAGE_UNITS_NV");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col, _parameter_queries[GL_MAX_TASK_TEXTURE_IMAGE_UNITS_NV].c_str());
+
+    ImGui::Text("GL_MAX_TASK_IMAGE_UNIFORMS_NV");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col, _parameter_queries[GL_MAX_TASK_IMAGE_UNIFORMS_NV].c_str());
+
+    ImGui::Text("GL_MAX_TASK_UNIFORM_COMPONENTS_NV");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col, _parameter_queries[GL_MAX_TASK_UNIFORM_COMPONENTS_NV].c_str());
+
+    ImGui::Text("GL_MAX_TASK_ATOMIC_COUNTER_BUFFERS_NV");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col, _parameter_queries[GL_MAX_TASK_ATOMIC_COUNTER_BUFFERS_NV].c_str());
+
+    ImGui::Text("GL_MAX_TASK_ATOMIC_COUNTERS_NV");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col, _parameter_queries[GL_MAX_TASK_ATOMIC_COUNTERS_NV].c_str());
+
+    ImGui::Text("GL_MAX_TASK_SHADER_STORAGE_BLOCKS_NV");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col, _parameter_queries[GL_MAX_TASK_SHADER_STORAGE_BLOCKS_NV].c_str());
+
+    ImGui::Text("GL_MAX_COMBINED_TASK_UNIFORM_COMPONENTS_NV");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col,
+        _parameter_queries[GL_MAX_COMBINED_TASK_UNIFORM_COMPONENTS_NV].c_str());
+
+    ImGui::Text("GL_MAX_MESH_WORK_GROUP_INVOCATIONS_NV");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col, _parameter_queries[GL_MAX_TASK_WORK_GROUP_INVOCATIONS_NV].c_str());
+
+    ImGui::Text("GL_MAX_MESH_TOTAL_MEMORY_SIZE_NV");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col, _parameter_queries[GL_MAX_MESH_TOTAL_MEMORY_SIZE_NV].c_str());
+
+    ImGui::Text("GL_MAX_TASK_TOTAL_MEMORY_SIZE_NV");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col, _parameter_queries[GL_MAX_TASK_TOTAL_MEMORY_SIZE_NV].c_str());
+
+    ImGui::Text("GL_MAX_MESH_OUTPUT_VERTICES_NV");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col, _parameter_queries[GL_MAX_MESH_OUTPUT_VERTICES_NV].c_str());
+
+    ImGui::Text("GL_MAX_MESH_OUTPUT_PRIMITIVES_NV");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col, _parameter_queries[GL_MAX_MESH_OUTPUT_PRIMITIVES_NV].c_str());
+
+    ImGui::Text("GL_MAX_TASK_OUTPUT_COUNT_NV");
+    ImGui::SameLine();
+    ImGui::TextColored(col,
+                       _parameter_queries[GL_MAX_TASK_OUTPUT_COUNT_NV].c_str());
+
+    ImGui::Text("GL_MAX_DRAW_MESH_TASKS_COUNT_NV");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col, _parameter_queries[GL_MAX_DRAW_MESH_TASKS_COUNT_NV].c_str());
+
+    ImGui::Text("GL_MAX_MESH_VIEWS_NV");
+    ImGui::SameLine();
+    ImGui::TextColored(col, _parameter_queries[GL_MAX_MESH_VIEWS_NV].c_str());
+
+    ImGui::Text("GL_MESH_OUTPUT_PER_VERTEX_GRANULARITY_NV");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col,
+        _parameter_queries[GL_MESH_OUTPUT_PER_VERTEX_GRANULARITY_NV].c_str());
+
+    ImGui::Text("GL_MESH_OUTPUT_PER_PRIMITIVE_GRANULARITY_NV");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col, _parameter_queries[GL_MESH_OUTPUT_PER_PRIMITIVE_GRANULARITY_NV]
+                 .c_str());
+
+    ImGui::Text("GL_MAX_MESH_WORK_GROUP_SIZE_NV:X");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col,
+        _parameter_queries.getParameterValues(GL_MAX_MESH_WORK_GROUP_SIZE_NV, 0)
+            .c_str());
+
+    ImGui::Text("GL_MAX_MESH_WORK_GROUP_SIZE_NV:Y");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col,
+        _parameter_queries.getParameterValues(GL_MAX_MESH_WORK_GROUP_SIZE_NV, 1)
+            .c_str());
+
+    ImGui::Text("GL_MAX_MESH_WORK_GROUP_SIZE_NV:Z");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col,
+        _parameter_queries.getParameterValues(GL_MAX_MESH_WORK_GROUP_SIZE_NV, 2)
+            .c_str());
+
+    ImGui::Text("GL_MAX_TASK_WORK_GROUP_SIZE_NV:X");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col,
+        _parameter_queries.getParameterValues(GL_MAX_TASK_WORK_GROUP_SIZE_NV, 0)
+            .c_str());
+
+    ImGui::Text("GL_MAX_TASK_WORK_GROUP_SIZE_NV:Y");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col,
+        _parameter_queries.getParameterValues(GL_MAX_TASK_WORK_GROUP_SIZE_NV, 1)
+            .c_str());
+
+    ImGui::Text("GL_MAX_TASK_WORK_GROUP_SIZE_NV:Z");
+    ImGui::SameLine();
+    ImGui::TextColored(
+        col,
+        _parameter_queries.getParameterValues(GL_MAX_TASK_WORK_GROUP_SIZE_NV, 2)
+            .c_str());
+
+    ImGui::End();
   }
 
 }  // namespace nell

@@ -62,4 +62,28 @@ void ShaderDefinition::buildResourceToLocationMap()
         _program_id, resource.program_interface, resource.name);
   }
 }
+
+const std::string& ParameterQueries::getParameterValues(GLenum pname)
+{
+  if (!_parameter_cache_map.contains(pname))
+  {
+    GLfloat data;
+    glGetFloatv(pname, &data);
+    _parameter_cache_map[pname] = std::to_string(data);
+  }
+  return _parameter_cache_map[pname];
+}
+
+std::string ParameterQueries::getParameterValues(GLenum pname, GLuint index)
+{
+  GLfloat data;
+  glGetFloati_v(pname, index, &data);
+
+  return std::to_string(data);
+}
+
+const std::string& ParameterQueries::operator[](GLenum pname)
+{
+  return getParameterValues(pname);
+}
 }  // namespace gl_utils

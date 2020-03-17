@@ -16,13 +16,12 @@ struct InterfaceToName
   const char* name;
 };
 
-//TODO Uniform Buffers & Uniforms
+// TODO Uniform Buffers & Uniforms
 class ShaderDefinition
 {
  public:
-  ShaderDefinition(
-      size_t id, GLenum shader_type, std::string full_path,
-      std::vector<InterfaceToName> interface_to_names);
+  ShaderDefinition(size_t id, GLenum shader_type, std::string full_path,
+                   std::vector<InterfaceToName> interface_to_names);
 
   GLuint operator[](const char* c) { return _resource_locations[c]; }
   explicit operator size_t() const { return _id; }
@@ -40,6 +39,15 @@ class ShaderDefinition
   GLuint _program_id;
 };
 
+class ParameterQueries
+{
+ public:
+  const std::string& getParameterValues(GLenum pname);
+  std::string getParameterValues(GLenum pname, GLuint index);
+  const std::string& operator[](GLenum pname);
 
+ private:
+  std::map<GLenum, std::string> _parameter_cache_map;
+};
 
 }  // namespace gl_utils

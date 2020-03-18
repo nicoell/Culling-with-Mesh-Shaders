@@ -16,7 +16,7 @@ struct TriangleMesh final : Mesh<TriangleMesh>, UiDrawable
 
   std::vector<glm::vec3> vertices;
   std::vector<glm::vec3> normals;
-  std::vector <unsigned int> indices;
+  std::vector<unsigned int> indices;
 
   size_t getVerticesSize() const { return vertices.size() * getVertexSizeT(); }
   size_t getNormalsSize() const { return normals.size() * getNormalSizeT(); }
@@ -37,7 +37,7 @@ struct TriangleMesh final : Mesh<TriangleMesh>, UiDrawable
   {
     return (aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices |
             aiProcess_ImproveCacheLocality | aiProcess_FlipWindingOrder |
-            aiProcess_Triangulate | aiProcess_PreTransformVertices);
+            aiProcess_Triangulate);
   }
 };
 

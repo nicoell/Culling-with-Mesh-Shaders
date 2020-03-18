@@ -198,5 +198,6 @@
     <None Include="resources\shaders\basic_shader.frag" />
     <None Include="resources\shaders\basic_shader.mesh" />
     <None Include="resources\shaders\drawmeshlet.mesh" />
+    <None Include="resources\shaders\basic_mesh.frag" />
   </ItemGroup>
 </Project>

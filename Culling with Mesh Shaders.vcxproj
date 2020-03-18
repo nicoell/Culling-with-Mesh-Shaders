@@ -195,6 +195,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="FrameworkOverview.cd" />
+    <None Include="resources\shaders\basic_mesh.frag" />
     <None Include="resources\shaders\basic_shader.frag" />
     <None Include="resources\shaders\basic_shader.mesh" />
     <None Include="resources\shaders\basic_shader.vert" />

@@ -11,13 +11,10 @@ MeshletTriangleMesh::MeshletTriangleMesh(aiMesh *ai_mesh)
   for (unsigned int i_vert = 0; i_vert < ai_mesh->mNumVertices; i_vert++)
   {
     aiVector3D ai_vec = ai_mesh->mVertices[i_vert];
-    vertices.emplace_back(ai_vec.x, ai_vec.y, ai_vec.z);
+    vertices.emplace_back(ai_vec.x, ai_vec.y, ai_vec.z, 1);
 
-    if (ai_mesh->HasNormals())
-    {
-      ai_vec = ai_mesh->mNormals[i_vert];
-      normals.emplace_back(ai_vec.x, ai_vec.y, ai_vec.z);
-    }
+    ai_vec = ai_mesh->mNormals[i_vert];
+    normals.emplace_back(ai_vec.x, ai_vec.y, ai_vec.z, 0);
   }
 
   for (unsigned int i_face = 0; i_face < ai_mesh->mNumFaces; ++i_face)

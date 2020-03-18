@@ -1,11 +1,11 @@
 #include <freeflight_controller.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <mesh.hpp>
+#include <meshlet_triangle_mesh.hpp>
 #include <model_import_system.hpp>
 #include <nell/definitions.hpp>
 #include <nell/scenes/mesh_shader_scene.hpp>
 #include <transform.hpp>
-#include <triangle_mesh.hpp>
 #include <triangle_mesh_draw_meshtasks_objects.hpp>
 #include <ui_entity_draw_system.hpp>
 #include <utils/gl_utils.hpp>
@@ -50,7 +50,7 @@ void MeshShaderScene::populate(Scene *scene, entt::registry &reg)
   auto &tf = reg.assign<comp::Transform>(entity);
   asp.path = "Armadillo.ply";
 
-  systems::importModelsFromSource<comp::TriangleMesh>(reg);
+  systems::importModelsFromSource<comp::MeshletTriangleMesh>(reg);
 }
 
 /*
@@ -65,33 +65,50 @@ void MeshShaderScene::populate(Scene *scene, entt::registry &reg)
 void MeshShaderScene::setup(Scene *scene, entt::registry &reg)
 {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  auto mesh_view = reg.view<comp::TriangleMesh>();
+  auto mesh_view = reg.view<comp::MeshletTriangleMesh>();
 
   for (auto entity : mesh_view)
   {
-    auto &triangle_mesh = mesh_view.get<comp::TriangleMesh>(entity);
+    auto &meshlet_triangle_mesh =
+        mesh_view.get<comp::MeshletTriangleMesh>(entity);
     auto &draw_elements_buffer =
         reg.assign<comp::TriangleMeshDrawMeshtasksObjects>(entity);
 
+    spdlog::debug(
+        "First triangle vertices:\n{:d}: {: f}, {: f}, {: f}\n{:d}: {: f}, {: f}, {: f}\n{:d}: {: f}, {: f}, {: f}",
+        meshlet_triangle_mesh.indices[0],
+        meshlet_triangle_mesh.vertices[meshlet_triangle_mesh.indices[0]].x,
+        meshlet_triangle_mesh.vertices[meshlet_triangle_mesh.indices[0]].y,
+        meshlet_triangle_mesh.vertices[meshlet_triangle_mesh.indices[0]].z,
+        meshlet_triangle_mesh.indices[1],
+        meshlet_triangle_mesh.vertices[meshlet_triangle_mesh.indices[1]].x,
+        meshlet_triangle_mesh.vertices[meshlet_triangle_mesh.indices[1]].y,
+        meshlet_triangle_mesh.vertices[meshlet_triangle_mesh.indices[1]].z,
+        meshlet_triangle_mesh.indices[2],
+        meshlet_triangle_mesh.vertices[meshlet_triangle_mesh.indices[2]].x,
+        meshlet_triangle_mesh.vertices[meshlet_triangle_mesh.indices[2]].y,
+        meshlet_triangle_mesh.vertices[meshlet_triangle_mesh.indices[2]].z);
     auto &vssbo = draw_elements_buffer.vertex_ssbo;
     auto &nssbo = draw_elements_buffer.normal_ssbo;
     auto &issbo = draw_elements_buffer.index_ssbo;
 
     // Setup VSSBO
     glCreateBuffers(1, &vssbo);
-    glNamedBufferStorage(vssbo, triangle_mesh.getVerticesSize(),
-                         triangle_mesh.vertices.data(), 0);
-    
+    glNamedBufferStorage(vssbo, meshlet_triangle_mesh.getVerticesSize(),
+                         meshlet_triangle_mesh.vertices.data(),
+                         GL_DYNAMIC_STORAGE_BIT);
+
     // Setup NSSBO
     glCreateBuffers(1, &nssbo);
-    glNamedBufferStorage(nssbo, triangle_mesh.getNormalsSize(),
-                         triangle_mesh.normals.data(), 0);
+    glNamedBufferStorage(nssbo, meshlet_triangle_mesh.getNormalsSize(),
+                         meshlet_triangle_mesh.normals.data(),
+                         GL_DYNAMIC_STORAGE_BIT);
 
     // Setup ISSBO
     glCreateBuffers(1, &issbo);
-    glNamedBufferStorage(issbo, triangle_mesh.getIndicesSize(),
-                         triangle_mesh.indices.data(), 0);
-
+    glNamedBufferStorage(issbo, meshlet_triangle_mesh.getIndicesSize(),
+                         meshlet_triangle_mesh.indices.data(),
+                         GL_DYNAMIC_STORAGE_BIT);
   }
 }
 void MeshShaderScene::resize(int w, int h) {}
@@ -100,7 +117,7 @@ void MeshShaderScene::update(Scene *scene, entt ::registry &reg,
                              const input::NellInputList &input_list,
                              const double &time, const double &delta_time)
 {
-  scene->drawComponentImGui<comp::TriangleMesh,
+  scene->drawComponentImGui<comp::MeshletTriangleMesh,
                             comp::TriangleMeshDrawMeshtasksObjects>();
 }
 void MeshShaderScene::render(Scene *scene, entt::registry &reg,
@@ -115,10 +132,10 @@ void MeshShaderScene::render(Scene *scene, entt::registry &reg,
   // Get Entities with Model of BasisShadingMesh and iterate
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   auto render_objects =
-      reg.view<comp::TriangleMesh, comp::TriangleMeshDrawMeshtasksObjects,
-               comp::Transform>();
-  const auto vertex_size_t = comp::TriangleMesh::getVertexSizeT();
-  const auto normal_size_t = comp::TriangleMesh::getNormalSizeT();
+      reg.view<comp::MeshletTriangleMesh,
+               comp::TriangleMeshDrawMeshtasksObjects, comp::Transform>();
+  const auto vertex_size_t = comp::MeshletTriangleMesh::getVertexSizeT();
+  const auto normal_size_t = comp::MeshletTriangleMesh::getNormalSizeT();
 
   glUseProgram(0);  // Unbind any bind programs to use program pipeline instead.
 
@@ -126,8 +143,9 @@ void MeshShaderScene::render(Scene *scene, entt::registry &reg,
   {
     auto [triangle_mesh, gpu_buffers, transform] =
         render_objects
-            .get<comp::TriangleMesh, comp::TriangleMeshDrawMeshtasksObjects,
-                 comp::Transform>(entity);
+            .get<comp::MeshletTriangleMesh,
+                 comp::TriangleMeshDrawMeshtasksObjects, comp::Transform>(
+                entity);
 
     auto mvp_matrix = perspective_camera.getViewProjectionMatrix() *
                       transform.getTransformation();
@@ -143,15 +161,14 @@ void MeshShaderScene::render(Scene *scene, entt::registry &reg,
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, nssbo);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, issbo);
 
-
     glProgramUniformMatrix4fv(static_cast<GLuint>(_basic_mesh_shader), 0, 1,
                               GL_FALSE, mvp_matrix_ptr);
 
-    glDrawMeshTasksNV(0, (triangle_mesh.indices.size() / 3)/32);
+    GLuint mesh_task_count = (triangle_mesh.indices.size() / 3) / 32;
+    mesh_task_count =
+        glm::min(gpu_buffers.limit_mesh_task_count, mesh_task_count);
 
-    // Draw Call
-    glDrawElements(GL_TRIANGLES, triangle_mesh.indices.size(), GL_UNSIGNED_INT,
-                   nullptr);
+    glDrawMeshTasksNV(0, mesh_task_count);
   }
 }
 }  // namespace nell

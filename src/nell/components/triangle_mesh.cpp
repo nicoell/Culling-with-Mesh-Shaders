@@ -2,7 +2,7 @@
 
 namespace nell::comp
 {
-TriangleMesh::TriangleMesh (aiMesh *ai_mesh)
+TriangleMesh::TriangleMesh(aiMesh *ai_mesh)
 {
   vertices.reserve(ai_mesh->mNumVertices);
   if (ai_mesh->HasNormals()) normals.reserve(ai_mesh->mNumVertices);
@@ -11,12 +11,12 @@ TriangleMesh::TriangleMesh (aiMesh *ai_mesh)
   for (unsigned int i_vert = 0; i_vert < ai_mesh->mNumVertices; i_vert++)
   {
     aiVector3D ai_vec = ai_mesh->mVertices[i_vert];
-    vertices.emplace_back(ai_vec.x, ai_vec.y, ai_vec.z);
+    vertices.emplace_back(ai_vec.x, ai_vec.y, ai_vec.z, 1);
 
     if (ai_mesh->HasNormals())
     {
       ai_vec = ai_mesh->mNormals[i_vert];
-      normals.emplace_back(ai_vec.x, ai_vec.y, ai_vec.z);
+      normals.emplace_back(ai_vec.x, ai_vec.y, ai_vec.z, 0);
     }
   }
 

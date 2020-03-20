@@ -147,6 +147,8 @@
     <ClCompile Include="src\nell\components\transform.cpp" />
     <ClCompile Include="src\nell\context.cpp" />
     <ClCompile Include="src\nell\scene.cpp" />
+    <ClCompile Include="src\nell\scenes\culling_mesh_scene.cpp" />
+    <ClCompile Include="src\nell\scenes\task_mesh_shader_scene.cpp" />
     <ClCompile Include="src\nell\systems\camera_system.cpp" />
     <ClCompile Include="src\nell\systems\freeflight_controller_system.cpp" />
     <ClCompile Include="src\nell\utils\glfw_utils.cpp" />
@@ -181,8 +183,10 @@
     <ClInclude Include="include\nell\scene.hpp" />
     <ClInclude Include="include\nell\context.hpp" />
     <ClInclude Include="include\nell\scenes\basic_scene.hpp" />
+    <ClInclude Include="include\nell\scenes\culling_mesh_scene.hpp" />
     <ClInclude Include="include\nell\scenes\mesh_shader_scene.hpp" />
     <ClInclude Include="include\nell\scenes\scene_impl.hpp" />
+    <ClInclude Include="include\nell\scenes\task_mesh_shader_scene.hpp" />
     <ClInclude Include="include\nell\systems\camera_system.hpp" />
     <ClInclude Include="include\nell\systems\model_import_system.hpp" />
     <ClInclude Include="include\nell\systems\freeflight_controller_system.hpp" />
@@ -198,6 +202,7 @@
     <None Include="resources\shaders\basic_mesh.frag" />
     <None Include="resources\shaders\basic_shader.frag" />
     <None Include="resources\shaders\basic_shader.mesh" />
+    <None Include="resources\shaders\basic_shader.task" />
     <None Include="resources\shaders\basic_shader.vert" />
     <None Include="resources\shaders\drawmeshlet.mesh" />
     <ClCompile Include="src\nell\scenes\mesh_shader_scene.cpp" />

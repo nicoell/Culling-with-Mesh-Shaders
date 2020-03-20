@@ -1,23 +1,23 @@
 #pragma once
 #include <imgui/misc/imgui_stdlib.h>
 #include <spdlog/spdlog.h>
-#include <ui_drawable.hpp>
+
+#include <nell/components/ui_drawable.hpp>
 #include <string>
 
 namespace nell::comp
 {
 struct ModelSource : UiDrawable
 {
-  void drawImGui () override;
+  void drawImGui() override;
   std::string path;
 };
 
-inline void ModelSource::drawImGui ()
+inline void ModelSource::drawImGui()
 {
   if (ImGui::TreeNode("Model Component"))
   {
-    ImGui::InputText("Source Path", &path,
-                     ImGuiInputTextFlags_ReadOnly);
+    ImGui::InputText("Source Path", &path, ImGuiInputTextFlags_ReadOnly);
     ImGui::TreePop();
   }
 }

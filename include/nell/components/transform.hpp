@@ -1,11 +1,10 @@
 #pragma once
-#include <glad.h>
-#include <imgui/misc/imgui_stdlib.h>
+#include <glad/glad.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
-#include <relationship_workable.hpp>
-#include <ui_drawable.hpp>
+#include <nell/components/relationship_workable.hpp>
+#include <nell/components/ui_drawable.hpp>
 
 namespace nell::comp
 {

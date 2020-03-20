@@ -1,9 +1,9 @@
 #pragma once
-#include <glad.h>
-#include <imgui/misc/imgui_stdlib.h>
-#include <ui_drawable.hpp>
+#include <glad/glad.h>
+
 #include <glm/glm.hpp>
-#include <transform.hpp>
+#include <nell/components/transform.hpp>
+#include <nell/components/ui_drawable.hpp>
 
 namespace nell::comp
 {
@@ -42,7 +42,8 @@ struct PerspectiveCamera : UiDrawable
 
   void updateMatrices(comp::Transform&);
 
-  void drawImGui () override;
+  void drawImGui() override;
+
  private:
   float _fovy;
   float _aspect;

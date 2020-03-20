@@ -1,0 +1,14 @@
+#version 450
+#extension GL_NV_mesh_shader : require
+
+// Number of threads per workgroup
+// - always 1D
+// - max is warpsize = 32
+layout(local_size_x=32) in;
+
+uniform uint taskcount;
+
+void main()
+{
+  gl_TaskCountNV = taskcount;
+}

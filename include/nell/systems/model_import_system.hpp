@@ -2,9 +2,9 @@
 #include <assimp/scene.h>
 
 #include <assimp/Importer.hpp>
-#include <entity_name.hpp>
 #include <entt/entt.hpp>
 #include <nell/components/child_parent_relationship.hpp>
+#include <nell/components/entity_name.hpp>
 #include <nell/components/model_source.hpp>
 #include <nell/components/transform.hpp>
 #include <nell/definitions.hpp>

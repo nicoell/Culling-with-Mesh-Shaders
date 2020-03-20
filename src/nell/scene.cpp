@@ -1,24 +1,16 @@
-#include <triangle_mesh.hpp>
-#include <camera_system.hpp>
 #include <cereal/archives/json.hpp>
-#include <freeflight_controller.hpp>
-#include <freeflight_controller_system.hpp>
-#include <nell/components/mesh.hpp>
+#include <nell/components/freeflight_controller.hpp>
+#include <nell/components/perspective_camera.hpp>
+#include <nell/components/transform.hpp>
 #include <nell/scene.hpp>
+#include <nell/systems/camera_system.hpp>
+#include <nell/systems/freeflight_controller_system.hpp>
 #include <nell/systems/model_import_system.hpp>
-#include <nell/systems/ui_entity_draw_system.hpp>
-#include <perspective_camera.hpp>
-#include <transform.hpp>
 #include <utility>
 
 namespace nell
 {
 Scene::~Scene() = default;
-
-/* TODO
- * - Toggable Entity Windows
- *
- */
 
 Scene::Scene(std::string scene_name, std::unique_ptr<SceneImpl> scene_impl,
              int width, int height)
@@ -77,7 +69,8 @@ void Scene::update(const double &time, const double &delta_time,
 
   _scene_impl->update(this, _registry, input_list, time, delta_time);
 
-  _relationship_processor.processRelationshipWorkTopDown<comp::Transform>(_registry);
+  _relationship_processor.processRelationshipWorkTopDown<comp::Transform>(
+      _registry);
 }
 void Scene::render(const double &time, const double &delta_time)
 {
@@ -114,7 +107,6 @@ void Scene::init()
 
   pc.setAspect(_width, _height);
 
-
-  //systems::importAssets(_registry);
+  // systems::importAssets(_registry);
 }
 }  // namespace nell

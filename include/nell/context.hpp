@@ -17,12 +17,13 @@
 #include <GLFW/glfw3.h>
 #include <spdlog/spdlog.h>
 
-#include <input.hpp>
 #include <map>
+#include <nell/input.hpp>
 #include <nell/scene.hpp>
 #include <nell/scenes/basic_scene.hpp>
 #include <nell/scenes/mesh_shader_scene.hpp>
 #include <nell/scenes/scene_impl.hpp>
+#include <nell/scenes/task_mesh_shader_scene.hpp>
 
 namespace nell
 {
@@ -45,8 +46,9 @@ class Context
   inline static std::map<std::string, std::function<SceneImpl *()>>
       _scene_definition_functions = {
           {"Basic Scene", []() { return new BasicScene(); }},
-          {"Basic MeshShader Scene",
-           []() { return new MeshShaderScene(); }}};
+          {"Basic MeshShader Scene", []() { return new MeshShaderScene(); }},
+          {"Basic TaskMeshShader Scene",
+           []() { return new TaskMeshShaderScene(); }}};
   static void glfwErrorCallback(int error, const char *description);
 
   static void logGlDebugMessage(GLenum source, GLenum type, GLuint id,
@@ -78,7 +80,6 @@ class Context
   int _height;
 
   gl_utils::ParameterQueries _parameter_queries;
-
-};  // namespace nell
+};
 
 }  // namespace nell

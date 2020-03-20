@@ -12,10 +12,7 @@ glm::mat4x4 PerspectiveCamera::getProjectionMatrix() const
   return _projection_matrix;
 }
 
-glm::mat4x4 PerspectiveCamera::getViewMatrix() const
-{
-  return _view_matrix;
-}
+glm::mat4x4 PerspectiveCamera::getViewMatrix() const { return _view_matrix; }
 
 glm::mat4x4 PerspectiveCamera::getViewProjectionMatrix() const
 {
@@ -62,7 +59,7 @@ void PerspectiveCamera::setNearAndFar(const float nearplane,
   _farplane = farplane;
 }
 
-void PerspectiveCamera::updateMatrices (comp::Transform &transform)
+void PerspectiveCamera::updateMatrices(comp::Transform& transform)
 {
   if (_is_dirty)
   {
@@ -73,13 +70,14 @@ void PerspectiveCamera::updateMatrices (comp::Transform &transform)
   }
   auto eye = transform.getTranslation();
   auto center = eye + transform.getForward();
-  //const auto up = glm::vec3(0, 1, 0);
+  // const auto up = glm::vec3(0, 1, 0);
   _view_matrix = glm::lookAt(eye, center, _up);
-  //_view_matrix = glm::mat4_cast(transform.getRotationRef()) * transform.getTranslationRef();
+  //_view_matrix = glm::mat4_cast(transform.getRotationRef()) *
+  //transform.getTranslationRef();
   _view_projection_matrix = _projection_matrix * _view_matrix;
 }
 
-void PerspectiveCamera::drawImGui ()
+void PerspectiveCamera::drawImGui()
 {
   if (ImGui::TreeNode("Perspective Camera"))
   {

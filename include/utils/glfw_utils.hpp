@@ -6,6 +6,6 @@ namespace glfw_utils
 {
 struct GlfwWindowDestroyHelper
 {
-  void operator() (GLFWwindow *ptr);
+  void operator()(GLFWwindow *ptr);
 };
-}  // namespace utils
+}  // namespace glfw_utils

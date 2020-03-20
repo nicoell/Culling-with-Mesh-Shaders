@@ -182,7 +182,7 @@ void Context::resizeCallback(GLFWwindow* window, int w, int h)
   auto context = static_cast<Context*>(glfwGetWindowUserPointer(window));
   context->_width = w;
   context->_height = h;
-  context->_scene->resize(w, h);
+  if (context->_scene) context->_scene->resize(w, h);
   glViewport(0, 0, w, h);
 }
 

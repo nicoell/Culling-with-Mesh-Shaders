@@ -1,4 +1,4 @@
-#include <components/transform.hpp>
+#include <nell/components/transform.hpp>
 #include <glm/gtc/epsilon.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
@@ -9,8 +9,6 @@ glm::quat Transform::getFromToRotation(glm::vec3 from, glm::vec3 to)
 {
   // From Stan Melax "The Shortest Arc Quaternion" in Game Programming Gems 1,
   // p.214-218
-  glm::quat q;
-
   from = glm::normalize(from);
   to = glm::normalize(to);
 
@@ -131,10 +129,7 @@ glm::mat4 Transform::getLocalTransformationDirty() const
   return _local_transformation;
 }
 
-glm::mat4 Transform::getTransformation () const
-{
-  return _transformation;
-}
+glm::mat4 Transform::getTransformation() const { return _transformation; }
 
 const GLfloat* Transform::getTransformationValuePtr()
 {

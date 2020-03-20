@@ -26,8 +26,11 @@ class BasicScene final : public SceneImpl
   GLuint _program_pipeline[1];
   GLuint _vertex_array_object;
 
-  gl_utils::ShaderDefinition _basic_vertex_shader;
-  gl_utils::ShaderDefinition _basic_fragment_shader;
+  gl_utils::ShaderProgram _basic_vertex_shader;
+  GLuint _position_attr_loc;
+  GLuint _normal_attr_loc;
+  GLuint _uniform_mvp_loc;
+  gl_utils::ShaderProgram _basic_fragment_shader;
 
   std::vector<std::map<const char*, GLuint>> _resource_location_maps;
 };

@@ -2,9 +2,8 @@
 
 namespace glfw_utils
 {
-
-void GlfwWindowDestroyHelper::operator() (GLFWwindow *ptr)
+void GlfwWindowDestroyHelper::operator()(GLFWwindow *ptr)
 {
   glfwDestroyWindow(ptr);
 }
-}
+}  // namespace glfw_utils

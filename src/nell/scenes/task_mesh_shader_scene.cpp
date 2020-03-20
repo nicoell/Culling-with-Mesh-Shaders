@@ -3,25 +3,28 @@
 #include <nell/components/triangle_mesh.hpp>
 #include <nell/components/triangle_mesh_draw_meshtasks_objects.hpp>
 #include <nell/definitions.hpp>
-#include <nell/scenes/mesh_shader_scene.hpp>
+#include <nell/scenes/task_mesh_shader_scene.hpp>
 #include <nell/systems/model_import_system.hpp>
 #include <utils/gl_utils.hpp>
 
 static constexpr unsigned int kPipelineCount = 1;
 static constexpr GLuint kTestPipeline = 0;
 
+static constexpr unsigned int kShaderProgramCount = 1;
 static constexpr auto kVertexSsbo = "vertex_ssbo";
 static constexpr auto kNormalSsbo = "normal_ssbo";
 static constexpr auto kIndexSsbo = "index_ssbo";
 
 static constexpr auto kUniformMvp = "mvp";
-
-static constexpr unsigned int kShaderProgramCount = 1;
+static constexpr auto kUniformMeshTaskCount = "taskcount";
 
 namespace nell
 {
-MeshShaderScene::MeshShaderScene()
-    : _basic_mesh_shader(
+TaskMeshShaderScene::TaskMeshShaderScene()
+    : _basic_task_shader(
+          0, GL_TASK_SHADER_NV,
+          std::string(kShaderPath) + std::string("basic_shader.task")),
+      _basic_mesh_shader(
           0, GL_MESH_SHADER_NV,
           std::string(kShaderPath) + std::string("basic_shader.mesh")),
       _basic_fragment_shader(
@@ -31,6 +34,8 @@ MeshShaderScene::MeshShaderScene()
   _resource_location_maps.reserve(kShaderProgramCount);
 
   glCreateProgramPipelines(kPipelineCount, _program_pipeline);
+  glUseProgramStages(_program_pipeline[kTestPipeline], GL_TASK_SHADER_BIT_NV,
+                     static_cast<GLuint>(_basic_task_shader));
   glUseProgramStages(_program_pipeline[kTestPipeline], GL_MESH_SHADER_BIT_NV,
                      static_cast<GLuint>(_basic_mesh_shader));
   glUseProgramStages(_program_pipeline[kTestPipeline], GL_FRAGMENT_SHADER_BIT,
@@ -44,9 +49,11 @@ MeshShaderScene::MeshShaderScene()
       _basic_mesh_shader.getShaderStorageBlock(kIndexSsbo).buffer_binding;
 
   _uniform_mvp_loc = _basic_mesh_shader.getUniform(kUniformMvp).location;
+  _uniform_mesh_task_count_loc =
+      _basic_task_shader.getUniform(kUniformMeshTaskCount).location;
 }
 
-void MeshShaderScene::populate(Scene *scene, entt::registry &reg)
+void TaskMeshShaderScene::populate(Scene *scene, entt::registry &reg)
 {
   auto entity = reg.create();
   reg.assign<comp::EntityName>(entity, "Armadillo");
@@ -57,7 +64,7 @@ void MeshShaderScene::populate(Scene *scene, entt::registry &reg)
   systems::importModelsFromSource<comp::TriangleMesh>(reg);
 }
 
-void MeshShaderScene::setup(Scene *scene, entt::registry &reg)
+void TaskMeshShaderScene::setup(Scene *scene, entt::registry &reg)
 {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   auto mesh_view = reg.view<comp::TriangleMesh>();
@@ -91,18 +98,18 @@ void MeshShaderScene::setup(Scene *scene, entt::registry &reg)
                          GL_DYNAMIC_STORAGE_BIT);
   }
 }
-void MeshShaderScene::resize(int w, int h) {}
+void TaskMeshShaderScene::resize(int w, int h) {}
 
-void MeshShaderScene::update(Scene *scene, entt ::registry &reg,
-                             const input::NellInputList &input_list,
-                             const double &time, const double &delta_time)
+void TaskMeshShaderScene::update(Scene *scene, entt ::registry &reg,
+                                 const input::NellInputList &input_list,
+                                 const double &time, const double &delta_time)
 {
   scene->drawComponentImGui<comp::TriangleMesh,
                             comp::TriangleMeshDrawMeshtasksObjects>();
 }
-void MeshShaderScene::render(Scene *scene, entt::registry &reg,
-                             entt::entity &camera_entity, const double &time,
-                             const double &delta_time)
+void TaskMeshShaderScene::render(Scene *scene, entt::registry &reg,
+                                 entt::entity &camera_entity,
+                                 const double &time, const double &delta_time)
 {
   auto perspective_camera = reg.get<comp::PerspectiveCamera>(camera_entity);
 
@@ -143,14 +150,16 @@ void MeshShaderScene::render(Scene *scene, entt::registry &reg,
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, _index_ssbo_binding_index,
                      issbo);
 
-    glProgramUniformMatrix4fv(static_cast<GLuint>(_basic_mesh_shader),
-                              _uniform_mvp_loc, 1, GL_FALSE, mvp_matrix_ptr);
-
     GLuint mesh_task_count = (triangle_mesh.indices.size() / 3) / 32;
     mesh_task_count =
         glm::min(gpu_buffers.limit_mesh_task_count, mesh_task_count);
 
-    glDrawMeshTasksNV(0, mesh_task_count);
+    glProgramUniform1ui(static_cast<GLuint>(_basic_task_shader),
+                        _uniform_mesh_task_count_loc, mesh_task_count);
+    glProgramUniformMatrix4fv(static_cast<GLuint>(_basic_mesh_shader),
+                              _uniform_mvp_loc, 1, GL_FALSE, mvp_matrix_ptr);
+
+    glDrawMeshTasksNV(0, 1);
   }
 }
 }  // namespace nell

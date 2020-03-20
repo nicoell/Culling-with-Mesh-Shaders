@@ -6,8 +6,6 @@
 
 namespace nell::comp
 {
-// TODO: Refactor this together with mesh struct.
-
 struct TriangleMeshDrawMeshtasksObjects final : BufferObjects, UiDrawable
 {
   void drawImGui() override;

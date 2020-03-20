@@ -9,10 +9,10 @@
 
 namespace nell
 {
-class MeshShaderScene final : public SceneImpl
+class TaskMeshShaderScene final : public SceneImpl
 {
  public:
-  explicit MeshShaderScene();
+  explicit TaskMeshShaderScene();
   void populate(Scene*, entt::registry& reg) override;
   void setup(Scene*, entt::registry& reg) override;
   void resize(int w, int h) override;
@@ -26,11 +26,13 @@ class MeshShaderScene final : public SceneImpl
   GLuint _program_pipeline[1];
   GLuint _vertex_array_object;
 
+  gl_utils::ShaderProgram _basic_task_shader;
   gl_utils::ShaderProgram _basic_mesh_shader;
   GLuint _vertex_ssbo_binding_index;
   GLuint _normal_ssbo_binding_index;
   GLuint _index_ssbo_binding_index;
   GLuint _uniform_mvp_loc;
+  GLuint _uniform_mesh_task_count_loc;
   gl_utils::ShaderProgram _basic_fragment_shader;
 
   std::vector<std::map<const char*, GLuint>> _resource_location_maps;

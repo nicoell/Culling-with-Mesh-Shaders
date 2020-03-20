@@ -2,7 +2,7 @@
 #include <imgui/misc/imgui_stdlib.h>
 
 #include <glm/glm.hpp>
-#include <ui_drawable.hpp>
+#include <nell/components/ui_drawable.hpp>
 
 namespace nell::comp
 {
@@ -20,7 +20,7 @@ struct FreeflightController final : UiDrawable
   {
   }
 
-  void drawImGui () override;
+  void drawImGui() override;
   float fly_speed;
   float sensitivity;
 
@@ -33,13 +33,12 @@ struct FreeflightController final : UiDrawable
   double prev_ypos;
 };
 
-inline void FreeflightController::drawImGui ()
+inline void FreeflightController::drawImGui()
 {
   if (ImGui::TreeNode("Freeflight Controller"))
   {
     ImGui::SliderFloat("Speed", &fly_speed, 0.1f, 20.0f);
-    ImGui::SliderFloat("Sensitivity", &sensitivity, 0.001f,
-                       0.1f);
+    ImGui::SliderFloat("Sensitivity", &sensitivity, 0.001f, 0.1f);
     ImGui::Checkbox("Invert Pitch", &invert_pitch);
     ImGui::Checkbox("Invert Yaw", &invert_yaw);
     ImGui::TreePop();

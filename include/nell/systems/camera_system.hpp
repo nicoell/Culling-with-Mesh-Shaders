@@ -3,6 +3,6 @@
 
 namespace nell::systems
 {
-  void updatePerspectiveCamera(entt::registry &, entt::entity &);
-  void updatePerspectiveCameras(entt::registry &, entt::entity &);
-}
+void updatePerspectiveCamera(entt::registry &, entt::entity &);
+void updatePerspectiveCameras(entt::registry &, entt::entity &);
+}  // namespace nell::systems

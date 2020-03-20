@@ -3,10 +3,9 @@
 #include <assimp/scene.h>
 #include <glad/glad.h>
 
-#include <buffer_objects.hpp>
 #include <glm/glm.hpp>
-#include <mesh.hpp>
-#include <ui_drawable.hpp>
+#include <nell/components/mesh.hpp>
+#include <nell/components/ui_drawable.hpp>
 #include <vector>
 
 namespace nell::comp

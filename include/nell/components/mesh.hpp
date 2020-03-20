@@ -1,17 +1,12 @@
 #pragma once
 
-struct aiMesh;
-
 namespace nell::comp
 {
-template<class T>
+template <class T>
 struct Mesh
 {
-  virtual ~Mesh () = default;
-  static unsigned requestImportFlags()
-  {
-    return T::getImportFlags();
-  }
+  virtual ~Mesh() = default;
+  static unsigned requestImportFlags() { return T::getImportFlags(); }
 };
 
 }  // namespace nell::comp

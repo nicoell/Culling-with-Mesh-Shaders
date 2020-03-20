@@ -1,5 +1,5 @@
+#include <nell/components/perspective_camera.hpp>
 #include <nell/systems/camera_system.hpp>
-#include <perspective_camera.hpp>
 
 namespace nell::systems
 {

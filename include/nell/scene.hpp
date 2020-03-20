@@ -1,14 +1,13 @@
 #pragma once
 #include <entt/entt.hpp>
-#include <input.hpp>
 #include <nell/components/freeflight_controller.hpp>
 #include <nell/components/model_source.hpp>
+#include <nell/components/perspective_camera.hpp>
 #include <nell/components/transform.hpp>
-#include <perspective_camera.hpp>
-#include <relationship_work_system.hpp>
-#include <scene_impl.hpp>
-#include <transform.hpp>
-#include <ui_entity_draw_system.hpp>
+#include <nell/input.hpp>
+#include <nell/scenes/scene_impl.hpp>
+#include <nell/systems/relationship_work_system.hpp>
+#include <nell/systems/ui_entity_draw_system.hpp>
 
 namespace nell
 {
@@ -51,8 +50,7 @@ template <typename... Component>
 void Scene::drawComponentImGui()
 {
   systems::drawEntityComponentHierarchyUi<
-      comp::Transform, comp::FreeflightController,
-                             comp::PerspectiveCamera, comp::ModelSource,
-                             Component...>(_registry, "Hierarchy Browser");
+      comp::Transform, comp::FreeflightController, comp::PerspectiveCamera,
+      comp::ModelSource, Component...>(_registry, "Hierarchy Browser");
 }
 }  // namespace nell

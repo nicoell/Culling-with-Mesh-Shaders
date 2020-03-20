@@ -75,10 +75,9 @@ class RelationshipProcessor
   void processWorkComponenentTopDown(entt::registry &reg, entt::entity &entity,
                                      entt::entity &parent) const
   {
-    if (auto *comp = reg.try_get<WorkComponent> (entity); comp)
+    if (auto *comp = reg.try_get<WorkComponent>(entity); comp)
     {
-      if (auto *comp_parent = reg.try_get<WorkComponent> (parent);
-          !comp_parent)
+      if (auto *comp_parent = reg.try_get<WorkComponent>(parent); !comp_parent)
       {
         comp->processWorkFromParent(nullptr);
       } else
@@ -92,7 +91,7 @@ class RelationshipProcessor
   void processWorkComponenentTopDown(entt::registry &reg,
                                      entt::entity &entity) const
   {
-    if (auto *comp = reg.try_get<WorkComponent> (entity); comp)
+    if (auto *comp = reg.try_get<WorkComponent>(entity); comp)
     {
       comp->processWorkFromParent(nullptr);
     }

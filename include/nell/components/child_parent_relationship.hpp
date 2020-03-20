@@ -13,4 +13,4 @@ struct ParentLink
   entt::entity parent;
 };
 
-}
+}  // namespace nell::comp

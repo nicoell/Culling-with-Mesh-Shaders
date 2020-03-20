@@ -1,6 +1,6 @@
 #pragma once
 #include <entt/entity/registry.hpp>
-#include <input.hpp>
+#include <nell/input.hpp>
 
 namespace nell
 {

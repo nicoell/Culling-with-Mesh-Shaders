@@ -203,14 +203,19 @@
     <ClInclude Include="include\nell\scenes\culling_mesh_scene.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\nell\components\meshlet_triangle_mesh_objects.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FrameworkOverview.cd" />
     <None Include="resources\shaders\basic_shader.vert" />
     <None Include="resources\shaders\basic_shader.frag" />
     <None Include="resources\shaders\basic_shader.mesh" />
-    <None Include="resources\shaders\drawmeshlet.mesh" />
     <None Include="resources\shaders\basic_mesh.frag" />
     <None Include="resources\shaders\basic_shader.task" />
+    <None Include="resources\shaders\culling_shader.task" />
+    <None Include="resources\shaders\culling_shader.frag" />
+    <None Include="resources\shaders\culling_shader.mesh" />
   </ItemGroup>
 </Project>

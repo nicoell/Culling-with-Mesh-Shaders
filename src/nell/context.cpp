@@ -70,7 +70,7 @@ void Context::run()
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // Begin Frame
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    glClearColor(0.3, 0.3, 0.3, 1);
+    glClearColor(1,1, 1, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     const double delta_time = glfwGetTime() - time;
     time = glfwGetTime();

@@ -53,7 +53,7 @@ void Scene::deserialize(const std::string &archive)
 
 void Scene::resize(int w, int h)
 {
-  auto perspective_camera = _registry.get<comp::PerspectiveCamera>(_camera);
+  auto &perspective_camera = _registry.get<comp::PerspectiveCamera>(_camera);
   _width = w;
   _height = h;
   perspective_camera.setAspect(w, h);

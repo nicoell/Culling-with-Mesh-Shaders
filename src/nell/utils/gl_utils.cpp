@@ -26,7 +26,7 @@ GLuint ShaderProgram::buildShaderProgram()
     spdlog::critical("Failed to load shader {}", _full_path);
     exit(EXIT_FAILURE);
   }
-  const GLchar* shader_code_ptr = shader_code.c_str();
+  auto shader_code_ptr = static_cast <const GLchar*>(shader_code.c_str());
 
   _program_id = glCreateShaderProgramv(_shader_type, 1, &shader_code_ptr);
   GLint status;

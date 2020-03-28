@@ -87,7 +87,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)include\glad;$(ProjectDir)include\imgui;$(ProjectDir)include\imgui\impl;$(ProjectDir)include\imgui\misc;$(ProjectDir)include\KHR;$(ProjectDir)include\nell;$(ProjectDir)include\nell\components;$(ProjectDir)include\nell\scenes;$(ProjectDir)include\nell\systems;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)include\glad;$(ProjectDir)include\imgui;$(ProjectDir)include\imgui\impl;$(ProjectDir)include\imgui\misc;$(ProjectDir)include\KHR;$(ProjectDir)include\nell;$(ProjectDir)include\nell\components;$(ProjectDir)include\nell\scenes;$(ProjectDir)include\nell\systems;$(ProjectDir)resources\shaders\;$(ProjectDir)resources\shaders\taskmeshculling\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <BrowseInformation>true</BrowseInformation>
       <EnableModules>
@@ -96,7 +96,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>$(ProjectDir)include;$(ProjectDir)include\nell;$(ProjectDir)include\nell\components;$(ProjectDir)include\nell\systems;$(ProjectDir)src;$(ProjectDir)src\nell;$(ProjectDir)src\nell\components;$(ProjectDir)src\nell\systems;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)include;$(ProjectDir)include\nell;$(ProjectDir)include\nell\components;$(ProjectDir)include\nell\systems;$(ProjectDir)src;$(ProjectDir)src\nell;$(ProjectDir)src\nell\components;$(ProjectDir)src\nell\systems;$(ProjectDir)resources\shaders\;$(ProjectDir)resources\shaders\taskmeshculling\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Bscmake>
       <PreserveSbr>true</PreserveSbr>
@@ -164,6 +164,7 @@
     <ClInclude Include="include\imgui\impl\imgui_impl_opengl3.h" />
     <ClInclude Include="include\imgui\misc\imgui_stdlib.h" />
     <ClInclude Include="include\KHR\khrplatform.h" />
+    <ClInclude Include="include\nell\components\meshlet_triangle_mesh_objects.hpp" />
     <ClInclude Include="include\nell\components\meshlet_triangle_mesh.hpp" />
     <ClInclude Include="include\nell\components\relationship_workable.hpp" />
     <ClInclude Include="include\nell\components\triangle_mesh.hpp" />
@@ -204,8 +205,10 @@
     <None Include="resources\shaders\basic_shader.mesh" />
     <None Include="resources\shaders\basic_shader.task" />
     <None Include="resources\shaders\basic_shader.vert" />
-    <None Include="resources\shaders\drawmeshlet.mesh" />
     <ClCompile Include="src\nell\scenes\mesh_shader_scene.cpp" />
+    <None Include="resources\shaders\culling_shader.frag" />
+    <None Include="resources\shaders\culling_shader.mesh" />
+    <None Include="resources\shaders\culling_shader.task" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

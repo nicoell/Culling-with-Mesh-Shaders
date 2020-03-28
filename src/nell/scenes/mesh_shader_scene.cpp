@@ -104,7 +104,7 @@ void MeshShaderScene::render(Scene *scene, entt::registry &reg,
                              entt::entity &camera_entity, const double &time,
                              const double &delta_time)
 {
-  auto perspective_camera = reg.get<comp::PerspectiveCamera>(camera_entity);
+  auto &perspective_camera = reg.get<comp::PerspectiveCamera>(camera_entity);
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // ### Render Meshes with Basic Shader ###

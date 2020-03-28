@@ -36,7 +36,7 @@ struct TriangleMesh final : Mesh<TriangleMesh>, UiDrawable
   static unsigned getImportFlags()
   {
     return (aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices |
-            aiProcess_ImproveCacheLocality | aiProcess_FlipWindingOrder |
+            aiProcess_ImproveCacheLocality | /*aiProcess_FlipWindingOrder |*/
             aiProcess_Triangulate);
   }
 };

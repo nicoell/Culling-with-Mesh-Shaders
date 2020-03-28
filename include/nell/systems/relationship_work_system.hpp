@@ -17,7 +17,7 @@ class RelationshipProcessor
 
     for (auto entity : root_view)
     {
-      auto child_link = root_view.get<comp::ChildLink>(entity);
+      auto &child_link = root_view.get<comp::ChildLink>(entity);
 
       (processWorkComponenentTopDown<WorkComponent>(reg, entity), ...);
 
@@ -32,7 +32,7 @@ class RelationshipProcessor
       while (!_entity_queue_a.empty())
       {
         auto entity = _entity_queue_a.front();
-        auto parent_entity = parent_view.get<comp::ParentLink>(entity).parent;
+        auto &parent_entity = parent_view.get<comp::ParentLink>(entity).parent;
 
         (processWorkComponenentTopDown<WorkComponent>(reg, entity,
                                                       parent_entity),
@@ -51,7 +51,7 @@ class RelationshipProcessor
       while (!_entity_queue_b.empty())
       {
         auto entity = _entity_queue_b.front();
-        auto parent_entity = parent_view.get<comp::ParentLink>(entity).parent;
+        auto &parent_entity = parent_view.get<comp::ParentLink>(entity).parent;
 
         (processWorkComponenentTopDown<WorkComponent>(reg, entity,
                                                       parent_entity),

@@ -1,0 +1,155 @@
+#version 460
+#extension GL_NV_gpu_shader5 : enable
+#extension GL_NV_mesh_shader : require
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// Structs and Config
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#define GPU_WARP_SIZE 32
+
+#define GPU_GROUP_SIZE GPU_WARP_SIZE
+
+#define GPU_PRIMITIVES_PER_MESHLET GPU_GROUP_SIZE
+
+#define GPU_MESHLETS_PER_INVOCATION 3
+#define GPU_MESHLETS_PER_WORKGROUP (GPU_GROUP_SIZE * GPU_MESHLETS_PER_INVOCATION)
+
+#define GPU_INDICES_PER_PRIMITIVE 3
+
+#define GPU_INDEX_BUFFER_BINDING 0
+#define GPU_VERTEX_DESCRIPTOR_BINDING 1
+#define GPU_MESHLET_DESCRIPTOR_BINDING 2
+
+//struct BoundingSphere
+//{
+//  vec3 center;
+//  float radius;
+//};
+//
+//struct BoundingCone
+//{
+//  vec3 normal;
+//  float angle;
+//};
+//
+//struct MeshletDescriptor
+//{
+//  BoundingSphere sphere;
+//  BoundingCone cone;
+//  uint primitive_count;
+//};
+
+struct VertexDescriptor
+{
+  vec3 position;
+  vec3 normal;
+};
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// Number of threads per workgroup
+// - always 1D
+// - max is warpsize = 32
+layout(local_size_x=GPU_PRIMITIVES_PER_MESHLET) in;
+
+#define MAX_VER  GPU_PRIMITIVES_PER_MESHLET * GPU_INDICES_PER_PRIMITIVE
+#define MAX_PRIM GPU_PRIMITIVES_PER_MESHLET
+
+// Primitive Type
+// - points, lines or triangles
+layout(triangles) out;
+// max allocation size for each meshlet
+layout(max_vertices=MAX_VER) out;
+layout(max_primitives=MAX_PRIM) out;
+
+// The amount of primitives the workgroup outputs
+// - can be less than max_primitives ( <= max_primitives)
+//out uint gl_PrimitiveCountNV;
+// An index buffer, using list type indices
+// - [max_primitives x 3 (triangles) / 2 (lines) / 1 (points)]
+//out uint gl_PrimitiveIndicesNV[MAX_PRIM*3]; 
+
+// Need to declare gl_PerVertex because of ARB_separate_shader_objects
+out gl_PerVertex
+{
+  vec4 gl_Position;
+  //float gl_PointSize;
+  //float gl_ClipDistance[];
+  //float gl_CullDistance[];
+} gl_stupid;
+
+out gl_MeshPerVertexNV {
+  vec4 gl_Position;  
+  //float gl_PointSize;
+  //float gl_ClipDistance[];
+  //float gl_CullDistance[];
+} gl_MeshVerticesNV[MAX_VER];
+
+out perVertexData {
+  vec3 color;
+} customData[MAX_VER];
+
+uniform mat4 mvp;
+uniform mat4 model_matrix_transpose_inverse;
+
+taskNV in Task
+{
+  uint   primitive_base_id;
+  uint   primitive_offsets[GPU_GROUP_SIZE];
+  uint   meshlet_ids[GPU_GROUP_SIZE];
+} IN;
+
+// special purpose per-primitive outputs
+//perprimitiveNV out gl_MeshPerPrimitiveNV {
+//  int gl_PrimitiveID;
+//  int gl_Layer;
+//  int gl_ViewportIndex;
+//  int gl_ViewportMask[];          // [1]
+//} gl_MeshPrimitivesNV[];
+
+layout(binding = GPU_INDEX_BUFFER_BINDING, std430) readonly buffer index_ssbo
+{
+	uint indices[];
+};
+
+layout(binding = GPU_VERTEX_DESCRIPTOR_BINDING, std430) readonly buffer vertex_descriptor_ssbo
+{
+	VertexDescriptor vertex_descriptors[];
+};
+
+//layout(binding = GPU_MESHLET_DESCRIPTOR_BINDING, std430) readonly buffer meshlet_descriptor_ssbo
+//{
+//	MeshletDescriptor meshlet_descriptors[];
+//};
+
+uint workgroup_primitive_base_id = IN.primitive_base_id + IN.primitive_offsets[gl_WorkGroupID.x];
+uint primitive_id = workgroup_primitive_base_id + gl_LocalInvocationID.x;
+uint index_base_id = primitive_id * GPU_INDICES_PER_PRIMITIVE;
+
+uint vertex_base_id = gl_LocalInvocationID.x * GPU_INDICES_PER_PRIMITIVE;
+
+void main()
+{
+  uvec3 mapped_primitive_indices = uvec3(indices[index_base_id],
+                                         indices[index_base_id + 1],
+                                         indices[index_base_id + 2]);
+  
+  //MeshletDescriptor m_desc = meshlet_descriptors[IN.meshlet_ids[gl_WorkGroupID.x]];
+
+  for(uint i = 0; i <= 2; i++)
+  {
+    VertexDescriptor desc = vertex_descriptors[mapped_primitive_indices[i]];
+    
+    gl_MeshVerticesNV[vertex_base_id + i].gl_Position  = mvp * vec4(desc.position, 1);
+
+    //customData[vertex_base_id + i].color = 0.5 * (model_matrix_transpose_inverse * vec4(m_desc.cone.normal, 0)).xyz/*desc.normal*/ + 0.5;
+    customData[vertex_base_id + i].color = 0.5 * (model_matrix_transpose_inverse * vec4(desc.normal, 0)).xyz + 0.5;
+
+    gl_PrimitiveIndicesNV[vertex_base_id + i] = vertex_base_id + i;
+  }
+  
+  if (gl_LocalInvocationID.x == 0) {
+    gl_PrimitiveCountNV = 32;
+  }
+}

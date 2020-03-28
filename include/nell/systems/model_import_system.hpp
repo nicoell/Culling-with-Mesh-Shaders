@@ -97,9 +97,7 @@ void importModelsFromSource(entt::registry &reg)
 
     auto parent_name = entity_name.name;
 
-    unsigned combined_flags = 0;
-    // combined_flags |= (requestImportFlags<MeshComponent>(), ...);
-    combined_flags = (MeshComponent::requestImportFlags() | ...);
+    const unsigned combined_flags = (MeshComponent::requestImportFlags() | ...);
 
     const aiScene *scene =
         importer.ReadFile(kAssetPath + asset_source_comp.path, combined_flags);

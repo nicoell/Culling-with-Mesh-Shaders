@@ -16,7 +16,11 @@ struct MeshletTriangleMeshObjects final : BufferObjects, UiDrawable
 
 inline void MeshletTriangleMeshObjects::drawImGui()
 {
-  ImGui::BulletText("MeshletTriangleMeshObjects");
+  if (ImGui::TreeNode("Meshlet Triangle Mesh"))
+  {
+    ImGui::BulletText("MeshletTriangleMeshObjects");
+    ImGui::TreePop();
+  }
 }
 
 }  // namespace nell::comp

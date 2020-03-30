@@ -152,6 +152,7 @@
     <ClCompile Include="src\nell\systems\camera_system.cpp" />
     <ClCompile Include="src\nell\systems\freeflight_controller_system.cpp" />
     <ClCompile Include="src\nell\utils\glfw_utils.cpp" />
+    <ClCompile Include="src\nell\utils\glm_utils.cpp" />
     <ClCompile Include="src\nell\utils\gl_utils.cpp" />
     <ClCompile Include="src\nell\utils\io_utils.cpp" />
   </ItemGroup>
@@ -195,8 +196,10 @@
     <ClInclude Include="include\nell\systems\ui_entity_draw_system.hpp" />
     <ClInclude Include="include\utils\glfw_utils.hpp" />
     <ClCompile Include="src\nell\scenes\basic_scene.cpp" />
+    <ClInclude Include="include\utils\glm_utils.hpp" />
     <ClInclude Include="include\utils\gl_utils.hpp" />
     <ClInclude Include="include\utils\io_utils.hpp" />
+    <ClInclude Include="include\utils\ping_pong_id.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FrameworkOverview.cd" />

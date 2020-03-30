@@ -19,6 +19,10 @@ class SceneImpl
   virtual void render(Scene *scene, entt::registry &reg,
                       entt::entity &camera_entity, const double &time,
                       const double &delta_time) = 0;
+
+  virtual void drawSceneImGui(Scene *scene, entt::registry &reg) = 0;
+  virtual void drawStatsImGui(Scene *scene, entt::registry &reg,
+                              const double &time, const double &delta_time) = 0;
 };
 
 }  // namespace nell

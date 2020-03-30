@@ -32,6 +32,7 @@ Context::Context(ContextOptions creation_options)
   glfwSetScrollCallback(_window, scrollCallback);
   glfwSetCursorPosCallback(_window, cursorPosCallback);
   glfwMakeContextCurrent(_window);
+  glfwSwapInterval(0);
 
   const auto glad_load_status = gladLoadGL();
   if (!glad_load_status)
@@ -64,16 +65,16 @@ Context::Context(ContextOptions creation_options)
 void Context::run()
 {
   spdlog::info("Run");
-  auto time = glfwGetTime();
+  _frame_start_time = glfwGetTime();
   while (!glfwWindowShouldClose(_window))
   {
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // Begin Frame
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    glClearColor(1,1, 1, 1);
+    glClearColor(1, 1, 1, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    const double delta_time = glfwGetTime() - time;
-    time = glfwGetTime();
+    _delta_time = glfwGetTime() - _frame_start_time;
+    _frame_start_time = glfwGetTime();
     beginUiFrame();
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -82,8 +83,8 @@ void Context::run()
     updateUiFrame();
     if (_scene)
     {
-      _scene->update(time, delta_time, _input_list);
-      _scene->render(time, delta_time);
+      _scene->update(_frame_start_time, _delta_time, _input_list);
+      _scene->render(_frame_start_time, _delta_time);
     }
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // End Frame
@@ -258,6 +259,7 @@ void Context::updateUiFrame()
   bool showSaveSettingsPopup = false;
   bool showLoadSettingsPopup = false;
   static bool gl_parameter_window = false;
+  static bool gl_stats_window = false;
   if (ImGui::BeginMainMenuBar())
   {
     if (ImGui::BeginMenu("Menu"))
@@ -302,10 +304,9 @@ void Context::updateUiFrame()
     }
     if (ImGui::BeginMenu("View"))
     {
-      if (ImGui::MenuItem("Gl Parameter Query", 0, &gl_parameter_window))
-      {
-        // showGlParameterPopup = true;
-      }
+      ImGui::MenuItem("Gl Parameter Query", 0, &gl_parameter_window);
+      ImGui::MenuItem("Show Stats Window", 0, &gl_stats_window);
+
       ImGui::EndMenu();
     }
     ImGui::EndMainMenuBar();
@@ -357,6 +358,38 @@ void Context::updateUiFrame()
       ImGui::CloseCurrentPopup();
     }
     ImGui::EndPopup();
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // Show Stats Window
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  if (gl_stats_window)
+  {
+    static int frame_count = 0;
+    static float dt = 0.0f;
+    static float fps = 0.0f;
+    frame_count++;
+    dt += _delta_time;
+
+    if (dt > 1.0f)
+    {
+      fps = frame_count / dt;
+      frame_count = 0;
+      dt -= 1.0f;
+    }
+
+    float frame_time_ms = 1000.0f * static_cast<float>(_delta_time);
+    ImGui::Begin("Stats", &gl_stats_window);
+    ImGui::Text("General Stats:");
+    ImGui::InputFloat("Frame Time (ms)", &frame_time_ms, 0, 0, "%.2f",
+                      ImGuiInputTextFlags_ReadOnly);
+    ImGui::InputFloat("FPS", &fps, 0, 0, "%.1f",
+                      ImGuiInputTextFlags_ReadOnly);
+    ImGui::Separator();
+    ImGui::Text("Scene Stats:");
+
+    if (_scene) _scene->drawStatsImGui(_frame_start_time, _delta_time);
+    ImGui::End();
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

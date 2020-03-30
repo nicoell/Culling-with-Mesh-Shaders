@@ -22,6 +22,7 @@ class Scene final
 
   template <typename... Component>
   void drawComponentImGui();
+  void drawStatsImGui(const double &time, const double &delta_time);
   void update(const double &time, const double &delta_time,
               const input::NellInputList &);
   void render(const double &time, const double &delta_time);

@@ -32,9 +32,14 @@ TriangleMesh::TriangleMesh(aiMesh *ai_mesh)
 
 void TriangleMesh::drawImGui()
 {
-  ImGui::Text("%s: %d", "Vertices", vertices.size());
-  ImGui::Text("%s: %d", "Normals", normals.size());
-  ImGui::Text("%s: %d", "Indices", indices.size());
+  if (ImGui::TreeNode("Meshlet Triangle Mesh"))
+  {
+    ImGui::Text("%s: %d", "Vertices", vertices.size());
+    ImGui::Text("%s: %d", "Normals", normals.size());
+    ImGui::Text("%s: %d", "Indices", indices.size());
+    ImGui::TreePop();
+  }
+  
 }
 
 }  // namespace nell::comp

@@ -16,7 +16,11 @@ struct TriangleMeshDrawElementsObjects final : BufferObjects, UiDrawable
 
 inline void TriangleMeshDrawElementsObjects::drawImGui()
 {
-  ImGui::BulletText("TriangleMeshDrawElementsObjects");
+  if (ImGui::TreeNode("Meshlet Triangle Mesh"))
+  {
+    ImGui::BulletText("TriangleMeshDrawElementsObjects");
+    ImGui::TreePop();
+  }
 }
 
 }  // namespace nell::comp

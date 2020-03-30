@@ -18,12 +18,16 @@ struct TriangleMeshDrawMeshtasksObjects final : BufferObjects, UiDrawable
 
 inline void TriangleMeshDrawMeshtasksObjects::drawImGui()
 {
-  const ImU16 u16_min = 0, u16_max = 65535;
-  const float drag_speed = 8.0f;
-  ImGui::DragScalar("Mesh Task Limit", ImGuiDataType_U16,
-                    &limit_mesh_task_count, drag_speed, &u16_min, &u16_max,
-                    "%u");
-  ImGui::BulletText("TriangleMeshDrawMeshtasksObjects");
+  if (ImGui::TreeNode("Meshlet Triangle Mesh"))
+  {
+    const ImU16 u16_min = 0, u16_max = 65535;
+    const float drag_speed = 8.0f;
+    ImGui::DragScalar("Mesh Task Limit", ImGuiDataType_U16,
+                      &limit_mesh_task_count, drag_speed, &u16_min, &u16_max,
+                      "%u");
+    ImGui::BulletText("TriangleMeshDrawMeshtasksObjects");
+    ImGui::TreePop();
+  }
 }
 
 }  // namespace nell::comp

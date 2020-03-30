@@ -13,7 +13,7 @@ struct PerspectiveCamera : UiDrawable
   PerspectiveCamera(float fovy = 60, float aspect = 1, float nearplane = 5,
                     float farplane = 1000)
       : _fovy(fovy),
-        _meshletculling_fovy_rad(fovy),
+        _meshletculling_fovy_rad(glm::radians(fovy)),
         _aspect(aspect),
         _nearplane(nearplane),
         _farplane(farplane),

@@ -82,6 +82,9 @@ class Context
   int _width;
   int _height;
 
+  double _frame_start_time;
+  double _delta_time;
+
   gl_utils::ParameterQueries _parameter_queries;
 };
 

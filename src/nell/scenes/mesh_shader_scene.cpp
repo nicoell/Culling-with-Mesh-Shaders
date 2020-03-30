@@ -153,4 +153,12 @@ void MeshShaderScene::render(Scene *scene, entt::registry &reg,
     glDrawMeshTasksNV(0, mesh_task_count);
   }
 }
+
+void MeshShaderScene::drawSceneImGui (Scene *scene, entt::registry &reg) {}
+
+void MeshShaderScene::drawStatsImGui (Scene *scene, entt::registry &reg,
+  const double &time, const double &delta_time)
+{
+  
+}
 }  // namespace nell

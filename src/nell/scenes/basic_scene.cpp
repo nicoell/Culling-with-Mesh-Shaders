@@ -182,4 +182,9 @@ void BasicScene::render(Scene *scene, entt::registry &reg,
                    nullptr);
   }
 }
+
+void BasicScene::drawSceneImGui (Scene *scene, entt::registry &reg) {}
+
+void BasicScene::drawStatsImGui (Scene *scene, entt::registry &reg,
+  const double &time, const double &delta_time) {}
 }  // namespace nell

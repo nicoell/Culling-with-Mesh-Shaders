@@ -21,7 +21,10 @@ class TaskMeshShaderScene final : public SceneImpl
               const double& delta_time) override;
   void render(Scene* scene, entt::registry& reg, entt::entity& camera_entity,
               const double& time, const double& delta_time) override;
+  void drawSceneImGui (Scene *scene, entt::registry &reg) override;
 
+  void drawStatsImGui (Scene *scene, entt::registry &reg, const double &time,
+    const double &delta_time) override;
  private:
   GLuint _program_pipeline[1];
   GLuint _vertex_array_object;

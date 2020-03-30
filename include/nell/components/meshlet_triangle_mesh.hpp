@@ -67,9 +67,6 @@ struct MeshletTriangleMesh final : Mesh<MeshletTriangleMesh>, UiDrawable
   std::vector<gpu::MeshletDescriptor> meshlet_descriptors;
   std::vector<GLuint> indices;
 
-  bool cull_front_or_back;
-  float debug_value = 0.0f;
-
   size_t getVertexDescriptorSize() const
   {
     return vertex_descriptors.size() * sizeof(gpu::VertexDescriptor);

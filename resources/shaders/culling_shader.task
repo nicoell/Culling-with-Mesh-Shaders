@@ -53,6 +53,9 @@ layout(binding = GPU_MESHLET_DESCRIPTOR_BINDING, std430) readonly buffer meshlet
 };
 
 
+uniform bool disable_frustum_culling;
+uniform bool disable_backface_culling;
+
 uniform vec4 frustum_planes[6]; //obj space
 uniform vec3 view_origin; //obj space
 //uniform vec3 view_up; //obj space
@@ -77,7 +80,7 @@ bool isFrontFaceVisible(
   return dot(cone_normal, sphere_center_dir) < sin_cone_angle;
 }
 
-bool isSphereInFrustum(
+bool isSphereOutsideFrustum(
   vec3 sphere_center, float sphere_radius)
 {
   bool isInside = false;
@@ -128,9 +131,9 @@ void main()
 
   MeshletDescriptor desc = meshlet_descriptors[meshlet_id];
 
-  bool render = isSphereInFrustum(desc.sphere.center, desc.sphere.radius) &&
-                isFrontFaceVisible(desc.sphere.center, desc.sphere.radius,
-                                   desc.cone.normal, desc.cone.angle);
+  bool render = (disable_frustum_culling || !isSphereOutsideFrustum(desc.sphere.center, desc.sphere.radius)) &&
+                (disable_backface_culling || isFrontFaceVisible(desc.sphere.center, desc.sphere.radius,
+                                   desc.cone.normal, desc.cone.angle));
 
   uint warp_bitfield = ballotThreadNV(render);
   uint task_count = bitCount(warp_bitfield);

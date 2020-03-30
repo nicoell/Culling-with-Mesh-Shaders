@@ -1,7 +1,8 @@
+#include <spdlog/spdlog.h>
+
+#include <glm/gtc/constants.hpp>
 #include <map>
 #include <nell/components/meshlet_triangle_mesh.hpp>
-#include <glm/gtc/constants.hpp>
-#include <spdlog/spdlog.h>
 
 namespace nell::gpu
 {
@@ -13,7 +14,7 @@ BoundingCone BoundingCone::GetApproximateReflexBoundingCone(
   {
     mean_normal += vertex_descriptor->normal;
   }
-  //mean_normal /= vertex_descriptors.size();
+  // mean_normal /= vertex_descriptors.size();
   mean_normal = glm::normalize(mean_normal);
 
   auto length = glm::length((mean_normal));
@@ -33,25 +34,25 @@ BoundingCone BoundingCone::GetApproximateReflexBoundingCone(
   float angular_span = 0.0f;
   for (auto vertex_descriptor : vertex_descriptors)
   {
-    angular_span = glm::max(
-        angular_span, glm::acos(glm::dot(mean_normal, vertex_descriptor->normal)));
+    angular_span =
+        glm::max(angular_span,
+                 glm::acos(glm::dot(mean_normal, vertex_descriptor->normal)));
   }
 
-  //Test correctness
+  // Test correctness
   /*
   float mean_dotp = 0;
   for (auto vertex_descriptor : vertex_descriptors)
   {
     float dotp = glm::dot(mean_normal, vertex_descriptor->normal);
     float testcos = glm::cos(glm::min(angular_span, glm::half_pi<float>()));
-    mean_dotp += dotp; 
+    mean_dotp += dotp;
     if (testcos - dotp > 0.01f)
     {
       spdlog::error("Vertex Normal is outside bounding cone");
     }
   }
   mean_dotp /= vertex_descriptors.size();*/
-  
 
   BoundingCone cone{.normal = mean_normal, .angle = angular_span};
   return cone;
@@ -163,13 +164,13 @@ MeshletTriangleMesh::MeshletTriangleMesh(aiMesh *ai_mesh)
 
 void MeshletTriangleMesh::drawImGui()
 {
-  
-  ImGui::Checkbox(cull_front_or_back ? "Front Face Culling" : "Back Face Culling", &cull_front_or_back);
-  ImGui::DragFloat("Debug Value", &debug_value, 0.001f);
-
-  ImGui::Text("%s: %d", "vertex_descriptors", vertex_descriptors.size());
-  ImGui::Text("%s: %d", "meshlet_descriptors", meshlet_descriptors.size());
-  ImGui::Text("%s: %d", "Indices", indices.size());
+  if (ImGui::TreeNode("Meshlet Triangle Mesh"))
+  {
+    ImGui::Text("%s: %d", "vertex_descriptors", vertex_descriptors.size());
+    ImGui::Text("%s: %d", "meshlet_descriptors", meshlet_descriptors.size());
+    ImGui::Text("%s: %d", "Indices", indices.size());
+    ImGui::TreePop();
+  }
 }
 
 }  // namespace nell::comp

@@ -60,6 +60,11 @@ void Scene::resize(int w, int h)
   _scene_impl->resize(w, h);
 }
 
+void Scene::drawStatsImGui (const double &time, const double &delta_time)
+{
+  _scene_impl->drawStatsImGui(this, _registry, time, delta_time);
+}
+
 void Scene::update(const double &time, const double &delta_time,
                    const input::NellInputList &input_list)
 {
@@ -67,6 +72,9 @@ void Scene::update(const double &time, const double &delta_time,
                                       delta_time);
   systems::updatePerspectiveCamera(_registry, _camera);
 
+  ImGui::Begin(_scene_name.c_str());
+  _scene_impl->drawSceneImGui(this, _registry);
+  ImGui::End();
   _scene_impl->update(this, _registry, input_list, time, delta_time);
 
   _relationship_processor.processRelationshipWorkTopDown<comp::Transform>(

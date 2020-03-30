@@ -84,6 +84,9 @@
     <ClCompile Include="src\nell\scenes\culling_mesh_scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\nell\utils\glm_utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\nell\context.hpp">
@@ -204,6 +207,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\nell\components\meshlet_triangle_mesh_objects.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utils\glm_utils.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utils\ping_pong_id.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

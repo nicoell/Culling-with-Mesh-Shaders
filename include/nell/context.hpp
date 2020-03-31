@@ -14,7 +14,6 @@
 #include <imgui/impl/imgui_impl_glfw.h>
 #include <imgui/impl/imgui_impl_opengl3.h>
 #define GLFW_INCLUDE_NONE
-#include <culling_mesh_scene.hpp>
 #include <GLFW/glfw3.h>
 #include <spdlog/spdlog.h>
 
@@ -22,6 +21,8 @@
 #include <nell/input.hpp>
 #include <nell/scene.hpp>
 #include <nell/scenes/basic_scene.hpp>
+#include <nell/scenes/culling_cs_scene.hpp>
+#include <nell/scenes/culling_mesh_scene.hpp>
 #include <nell/scenes/mesh_shader_scene.hpp>
 #include <nell/scenes/scene_impl.hpp>
 #include <nell/scenes/task_mesh_shader_scene.hpp>
@@ -50,8 +51,8 @@ class Context
           {"Basic MeshShader Scene", []() { return new MeshShaderScene(); }},
           {"Basic TaskMeshShader Scene",
            []() { return new TaskMeshShaderScene(); }},
-          {"Culling TaskMesh Scene",
-           []() { return new CullingMeshScene(); }}};
+          {"Culling TaskMesh Scene", []() { return new CullingMeshScene(); }},
+          {"Culling Compute Scene", []() { return new CullingCsScene(); }}};
   static void glfwErrorCallback(int error, const char *description);
 
   static void logGlDebugMessage(GLenum source, GLenum type, GLuint id,

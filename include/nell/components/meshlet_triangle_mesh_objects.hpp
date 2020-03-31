@@ -9,7 +9,8 @@ namespace nell::comp
 struct MeshletTriangleMeshObjects final : BufferObjects, UiDrawable
 {
   void drawImGui() override;
-  GLuint vertex_descriptor_ssbo;
+  GLuint vertex_ssbo;
+  GLuint normal_ssbo;
   GLuint meshlet_descriptor_ssbo;
   GLuint index_ssbo;
 };

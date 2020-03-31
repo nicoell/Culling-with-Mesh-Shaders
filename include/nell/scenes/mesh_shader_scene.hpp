@@ -35,8 +35,6 @@ class MeshShaderScene final : public SceneImpl
   GLuint _index_ssbo_binding_index;
   GLuint _uniform_mvp_loc;
   gl_utils::ShaderProgram _basic_fragment_shader;
-
-  std::vector<std::map<const char*, GLuint>> _resource_location_maps;
 };
 
 }  // namespace nell

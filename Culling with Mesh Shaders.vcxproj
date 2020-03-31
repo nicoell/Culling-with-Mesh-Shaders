@@ -125,11 +125,14 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)include\glad;$(ProjectDir)include\imgui;$(ProjectDir)include\imgui\impl;$(ProjectDir)include\imgui\misc;$(ProjectDir)include\KHR;$(ProjectDir)include\nell;$(ProjectDir)include\nell\components;$(ProjectDir)include\nell\scenes;$(ProjectDir)include\nell\systems;$(ProjectDir)resources\shaders\;$(ProjectDir)resources\shaders\taskmeshculling\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(ProjectDir)include;$(ProjectDir)include\nell;$(ProjectDir)include\nell\components;$(ProjectDir)include\nell\systems;$(ProjectDir)src;$(ProjectDir)src\nell;$(ProjectDir)src\nell\components;$(ProjectDir)src\nell\systems;$(ProjectDir)resources\shaders\;$(ProjectDir)resources\shaders\taskmeshculling\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -147,6 +150,7 @@
     <ClCompile Include="src\nell\components\transform.cpp" />
     <ClCompile Include="src\nell\context.cpp" />
     <ClCompile Include="src\nell\scene.cpp" />
+    <ClCompile Include="src\nell\scenes\culling_cs_scene.cpp" />
     <ClCompile Include="src\nell\scenes\culling_mesh_scene.cpp" />
     <ClCompile Include="src\nell\scenes\task_mesh_shader_scene.cpp" />
     <ClCompile Include="src\nell\systems\camera_system.cpp" />
@@ -165,6 +169,7 @@
     <ClInclude Include="include\imgui\impl\imgui_impl_opengl3.h" />
     <ClInclude Include="include\imgui\misc\imgui_stdlib.h" />
     <ClInclude Include="include\KHR\khrplatform.h" />
+    <ClInclude Include="include\nell\components\meshlet_triangle_mesh_cs_objects.hpp" />
     <ClInclude Include="include\nell\components\meshlet_triangle_mesh_objects.hpp" />
     <ClInclude Include="include\nell\components\meshlet_triangle_mesh.hpp" />
     <ClInclude Include="include\nell\components\relationship_workable.hpp" />
@@ -185,6 +190,7 @@
     <ClInclude Include="include\nell\scene.hpp" />
     <ClInclude Include="include\nell\context.hpp" />
     <ClInclude Include="include\nell\scenes\basic_scene.hpp" />
+    <ClInclude Include="include\nell\scenes\culling_cs_scene.hpp" />
     <ClInclude Include="include\nell\scenes\culling_mesh_scene.hpp" />
     <ClInclude Include="include\nell\scenes\mesh_shader_scene.hpp" />
     <ClInclude Include="include\nell\scenes\scene_impl.hpp" />
@@ -209,7 +215,8 @@
     <None Include="resources\shaders\basic_shader.task" />
     <None Include="resources\shaders\basic_shader.vert" />
     <ClCompile Include="src\nell\scenes\mesh_shader_scene.cpp" />
-    <None Include="resources\shaders\culling_shader.frag" />
+    <None Include="resources\shaders\cs_culling.comp" />
+    <None Include="resources\shaders\cs_culling.vert" />
     <None Include="resources\shaders\culling_shader.mesh" />
     <None Include="resources\shaders\culling_shader.task" />
   </ItemGroup>

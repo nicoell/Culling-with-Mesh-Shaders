@@ -17,33 +17,9 @@
 #define GPU_INDICES_PER_PRIMITIVE 3
 
 #define GPU_INDEX_BUFFER_BINDING 0
-#define GPU_VERTEX_DESCRIPTOR_BINDING 1
-#define GPU_MESHLET_DESCRIPTOR_BINDING 2
-
-//struct BoundingSphere
-//{
-//  vec3 center;
-//  float radius;
-//};
-//
-//struct BoundingCone
-//{
-//  vec3 normal;
-//  float angle;
-//};
-//
-//struct MeshletDescriptor
-//{
-//  BoundingSphere sphere;
-//  BoundingCone cone;
-//  uint primitive_count;
-//};
-
-struct VertexDescriptor
-{
-  vec3 position;
-  vec3 normal;
-};
+#define GPU_VERTICES_BINDING 1
+#define GPU_NORMALS_BINDING 2
+#define GPU_MESHLET_DESCRIPTOR_BINDING 3
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -113,9 +89,13 @@ layout(binding = GPU_INDEX_BUFFER_BINDING, std430) readonly buffer index_ssbo
 	uint indices[];
 };
 
-layout(binding = GPU_VERTEX_DESCRIPTOR_BINDING, std430) readonly buffer vertex_descriptor_ssbo
+layout(binding = GPU_VERTICES_BINDING, std430) readonly buffer vertex_ssbo
 {
-	VertexDescriptor vertex_descriptors[];
+	vec4 vertices[];
+};
+layout(binding = GPU_NORMALS_BINDING, std430) readonly buffer normal_ssbo
+{
+	vec4 normals[];
 };
 
 //layout(binding = GPU_MESHLET_DESCRIPTOR_BINDING, std430) readonly buffer meshlet_descriptor_ssbo
@@ -130,21 +110,17 @@ uint index_base_id = primitive_id * GPU_INDICES_PER_PRIMITIVE;
 uint vertex_base_id = gl_LocalInvocationID.x * GPU_INDICES_PER_PRIMITIVE;
 
 void main()
-{
-  uvec3 mapped_primitive_indices = uvec3(indices[index_base_id],
-                                         indices[index_base_id + 1],
-                                         indices[index_base_id + 2]);
-  
+{  
   //MeshletDescriptor m_desc = meshlet_descriptors[IN.meshlet_ids[gl_WorkGroupID.x]];
 
-  for(uint i = 0; i <= 2; i++)
+  for(uint i = 0; i < GPU_INDICES_PER_PRIMITIVE; i++)
   {
-    VertexDescriptor desc = vertex_descriptors[mapped_primitive_indices[i]];
+    uint cur_index = indices[index_base_id + i];
     
-    gl_MeshVerticesNV[vertex_base_id + i].gl_Position  = mvp * vec4(desc.position, 1);
+    gl_MeshVerticesNV[vertex_base_id + i].gl_Position  = mvp * vertices[cur_index];
 
     //customData[vertex_base_id + i].color = 0.5 * (model_matrix_transpose_inverse * vec4(m_desc.cone.normal, 0)).xyz/*desc.normal*/ + 0.5;
-    customData[vertex_base_id + i].color = 0.5 * (model_matrix_transpose_inverse * vec4(desc.normal, 0)).xyz + 0.5;
+    customData[vertex_base_id + i].color = 0.5 * (model_matrix_transpose_inverse * normals[cur_index]).xyz + 0.5;
 
     gl_PrimitiveIndicesNV[vertex_base_id + i] = vertex_base_id + i;
   }

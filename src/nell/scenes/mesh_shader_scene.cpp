@@ -8,15 +8,13 @@
 #include <utils/gl_utils.hpp>
 
 static constexpr unsigned int kPipelineCount = 1;
-static constexpr GLuint kTestPipeline = 0;
+static constexpr GLuint kRenderPipeline = 0;
 
 static constexpr auto kVertexSsbo = "vertex_ssbo";
 static constexpr auto kNormalSsbo = "normal_ssbo";
 static constexpr auto kIndexSsbo = "index_ssbo";
 
 static constexpr auto kUniformMvp = "mvp";
-
-static constexpr unsigned int kShaderProgramCount = 1;
 
 namespace nell
 {
@@ -28,12 +26,10 @@ MeshShaderScene::MeshShaderScene()
           0, GL_FRAGMENT_SHADER,
           std::string(kShaderPath) + std::string("basic_shader.frag"))
 {
-  _resource_location_maps.reserve(kShaderProgramCount);
-
   glCreateProgramPipelines(kPipelineCount, _program_pipeline);
-  glUseProgramStages(_program_pipeline[kTestPipeline], GL_MESH_SHADER_BIT_NV,
+  glUseProgramStages(_program_pipeline[kRenderPipeline], GL_MESH_SHADER_BIT_NV,
                      static_cast<GLuint>(_basic_mesh_shader));
-  glUseProgramStages(_program_pipeline[kTestPipeline], GL_FRAGMENT_SHADER_BIT,
+  glUseProgramStages(_program_pipeline[kRenderPipeline], GL_FRAGMENT_SHADER_BIT,
                      static_cast<GLuint>(_basic_fragment_shader));
 
   _vertex_ssbo_binding_index =
@@ -130,7 +126,7 @@ void MeshShaderScene::render(Scene *scene, entt::registry &reg,
                       transform.getTransformation();
     auto mvp_matrix_ptr = glm::value_ptr(mvp_matrix);
 
-    glBindProgramPipeline(_program_pipeline[kTestPipeline]);
+    glBindProgramPipeline(_program_pipeline[kRenderPipeline]);
 
     auto &vssbo = gpu_buffers.vertex_ssbo;
     auto &nssbo = gpu_buffers.normal_ssbo;

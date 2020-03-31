@@ -37,8 +37,6 @@ class TaskMeshShaderScene final : public SceneImpl
   GLuint _uniform_mvp_loc;
   GLuint _uniform_mesh_task_count_loc;
   gl_utils::ShaderProgram _basic_fragment_shader;
-
-  std::vector<std::map<const char*, GLuint>> _resource_location_maps;
 };
 
 }  // namespace nell

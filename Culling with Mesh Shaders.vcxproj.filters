@@ -87,6 +87,9 @@
     <ClCompile Include="src\nell\utils\glm_utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\nell\scenes\culling_cs_scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\nell\context.hpp">
@@ -215,6 +218,12 @@
     <ClInclude Include="include\utils\ping_pong_id.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\nell\scenes\culling_cs_scene.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\nell\components\meshlet_triangle_mesh_cs_objects.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="FrameworkOverview.cd" />
@@ -224,7 +233,8 @@
     <None Include="resources\shaders\basic_mesh.frag" />
     <None Include="resources\shaders\basic_shader.task" />
     <None Include="resources\shaders\culling_shader.task" />
-    <None Include="resources\shaders\culling_shader.frag" />
     <None Include="resources\shaders\culling_shader.mesh" />
+    <None Include="resources\shaders\cs_culling.vert" />
+    <None Include="resources\shaders\cs_culling.comp" />
   </ItemGroup>
 </Project>

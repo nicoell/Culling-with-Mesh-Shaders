@@ -1,31 +1,24 @@
 #version 460
 
-#extension GL_NV_mesh_shader : require
-#extension GL_NV_shader_thread_group : require
-
-// Structs and Config
-
 #define GPU_WARP_SIZE 32
 #define GPU_GROUP_SIZE GPU_WARP_SIZE
-
+#define GPU_PRIMITIVES_PER_MESHLET GPU_GROUP_SIZE
 
 // Number of threads per workgroup
 // - always 1D
 // - max is warpsize = 32
-layout(local_size_x=GPU_GROUP_SIZE) in;
-
-
-#define GPU_PRIMITIVES_PER_MESHLET GPU_GROUP_SIZE
+layout(local_size_x=GPU_PRIMITIVES_PER_MESHLET, local_size_y=1, local_size_z=1) in;
 
 #define GPU_MESHLETS_PER_INVOCATION 3
 #define GPU_MESHLETS_PER_WORKGROUP (GPU_GROUP_SIZE * GPU_MESHLETS_PER_INVOCATION)
 
 #define GPU_INDICES_PER_PRIMITIVE 3
+#define GPU_VERTICES_PER_MESHLET  GPU_PRIMITIVES_PER_MESHLET * GPU_INDICES_PER_PRIMITIVE
 
 #define GPU_INDEX_BUFFER_BINDING 0
-#define GPU_VERTICES_BINDING 1
-#define GPU_NORMALS_BINDING 2
-#define GPU_MESHLET_DESCRIPTOR_BINDING 3
+#define GPU_MESHLET_DESCRIPTOR_BINDING 1
+#define GPU_VISIBLE_INDEX_BUFFER_BINDING 2
+#define GPU_DRAW_INDIRECT_BUFFER_BINDING 3
 
 const float pi_half = 1.57079;
 
@@ -48,11 +41,32 @@ struct MeshletDescriptor
   uint primitive_count;
 };
 
+struct DrawElementsIndirectCommand{
+  uint count;
+  uint instanceCount;
+  uint firstIndex;
+  uint baseVertex;
+  uint baseInstance;
+};
+
+layout(binding = GPU_INDEX_BUFFER_BINDING, std430) readonly buffer index_ssbo
+{
+	uint indices[];
+};
 layout(binding = GPU_MESHLET_DESCRIPTOR_BINDING, std430) readonly buffer meshlet_descriptor_ssbo
 {
 	MeshletDescriptor meshlet_descriptors[];
 };
 
+layout(binding = GPU_VISIBLE_INDEX_BUFFER_BINDING, std430) writeonly buffer visible_index_ssbo
+{
+	uint indices[];
+} visible;
+
+layout(binding = GPU_DRAW_INDIRECT_BUFFER_BINDING, std430) buffer draw_indirect_ssbo
+{
+	DrawElementsIndirectCommand draw_indirect_commands[];
+};
 
 uniform bool disable_frustum_culling;
 uniform bool disable_backface_culling;
@@ -64,12 +78,12 @@ uniform vec3 view_origin; //obj space
 
 uniform float debug_value;
 
-taskNV out Task
-{
-  uint   primitive_base_id;
-  uint   primitive_offsets[GPU_GROUP_SIZE];
-  uint   meshlet_ids[GPU_GROUP_SIZE];
-} OUT;
+//taskNV out Task
+//{
+//  uint   primitive_base_id;
+//  uint   primitive_offsets[GPU_GROUP_SIZE];
+//  uint   meshlet_ids[GPU_GROUP_SIZE];
+//} OUT;
 
 bool isFrontFaceVisible(
   vec3 sphere_center, float sphere_radius,
@@ -122,33 +136,45 @@ bool isSphereOutsideFrustum(
 //  return (dot(cone_normal, sphere_center_dir) - angular_span) < sin_cone_angle;
 //}
 
+shared bool sh_render;
+shared uint sh_visible_base_id;
 
 void main()
 {
-  uint meshlet_id = gl_GlobalInvocationID.x;
-  uint workgroup_meshlet_base_id = gl_WorkGroupID.x * GPU_GROUP_SIZE;
-  uint workgroup_primitive_base_id = workgroup_meshlet_base_id * GPU_PRIMITIVES_PER_MESHLET;
-  uint local_primitive_offset = gl_LocalInvocationID.x * GPU_PRIMITIVES_PER_MESHLET;
-
-  MeshletDescriptor desc = meshlet_descriptors[meshlet_id];
-
-  bool render = (disable_frustum_culling || !isSphereOutsideFrustum(desc.sphere.center, desc.sphere.radius)) &&
-                (disable_backface_culling || isFrontFaceVisible(desc.sphere.center, desc.sphere.radius,
-                                   desc.cone.normal, desc.cone.angle));
-
-  uint warp_bitfield = ballotThreadNV(render);
-  uint task_count = bitCount(warp_bitfield);
-
   if (gl_LocalInvocationID.x == 0)
   {
-    OUT.primitive_base_id = workgroup_primitive_base_id;
-    gl_TaskCountNV = task_count;
-  }
+    uint meshlet_id = gl_WorkGroupID.x;
+    MeshletDescriptor desc = meshlet_descriptors[meshlet_id];
 
-  uint task_out_index = bitCount(warp_bitfield & gl_ThreadLtMaskNV);
-  if (render)
+    bool render = (disable_frustum_culling || !isSphereOutsideFrustum(desc.sphere.center, desc.sphere.radius)) &&
+                (disable_backface_culling || isFrontFaceVisible(desc.sphere.center, desc.sphere.radius,
+                                   desc.cone.normal, desc.cone.angle));
+    //sh_render = sh_render || gl_LocalInvocationID.x == 0;
+    if (render)
+    {
+      sh_visible_base_id = atomicAdd(draw_indirect_commands[0].count, GPU_VERTICES_PER_MESHLET);
+    }
+    sh_render = render;
+  }
+//  if (gl_LocalInvocationID.x == 1)
+//  {
+//    sh_render = true;
+//    sh_visible_base_id = atomicAdd(draw_indirect_commands[0].count, GPU_VERTICES_PER_MESHLET);
+//  }
+  memoryBarrierShared();
+  barrier();
+
+  if(sh_render)
   {
-    OUT.primitive_offsets[task_out_index] = local_primitive_offset;
-    OUT.meshlet_ids[task_out_index] = meshlet_id;
+    uint primitive_id = gl_GlobalInvocationID.x;
+    uint local_primitive_id = gl_LocalInvocationID.x;
+    uint index_base_id = primitive_id * GPU_INDICES_PER_PRIMITIVE;
+    uint local_index_base_id = local_primitive_id * GPU_INDICES_PER_PRIMITIVE;
+
+    for(uint i = 0; i < GPU_INDICES_PER_PRIMITIVE; i++)
+    {
+      visible.indices[sh_visible_base_id + local_index_base_id + i] = 
+        indices[index_base_id + i];
+    }
   }
 }

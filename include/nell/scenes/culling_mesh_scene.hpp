@@ -17,9 +17,6 @@ namespace nell
          - Cull if dot(cone.Normal, -view) < -sin(cone.angle)
     Frustum Culling
         Bounding Sphere
-    Occlusion Culling
-        Hierarchical Z Map with Bounding Sphere
-        Depth pre-pass with best Occluders
  */
 class CullingMeshScene final : public SceneImpl
 {
@@ -38,36 +35,39 @@ class CullingMeshScene final : public SceneImpl
                       const double& delta_time) override;
 
  private:
-  GLuint _program_pipeline[1]{};
-
+  //Stats
   int _rendered_objects{};
+  int _frame_count{};
+  double _time_acc{};
 
-
-  int _cpu_frame_count{};
-  double _cpu_time;
-  double _cpu_time_min;
-  double _cpu_time_max;
-  double _cpu_time_avg;
+  double _cpu_time{};
+  double _cpu_time_min{DBL_MAX};
+  double _cpu_time_max{};
+  double _cpu_time_avg{};
   double _cpu_time_acc{};
 
-  int _gpu_frame_count{};
-  GLuint64 _gpu_time;
-  GLuint64 _gpu_time_min;
-  GLuint64 _gpu_time_max;
-  GLuint64 _gpu_time_avg;
+  GLuint64 _gpu_time{};
+  GLuint64 _gpu_time_min{UINT_MAX};
+  GLuint64 _gpu_time_max{};
+  GLuint64 _gpu_time_avg{};
   GLuint64 _gpu_time_acc{};
 
   GLuint _gpu_timer_query[2]{};
   utils::PingPongId<size_t> _swap_id;
 
+  //Settings
   bool _disable_frustum_culling;
   bool _freeze_frustum_culling;
-  std::vector<glm::vec4> _cached_frustum_planes;
   bool _disable_backface_culling;
   bool _freeze_backface_culling;
+  //Cached Data
+  std::vector<glm::vec4> _cached_frustum_planes;
   glm::vec3 _cached_view_origin{};
   glm::vec3 _cached_view_up{};
   glm::vec3 _cached_view_right{};
+
+  //Programs, Shader, Locations
+  GLuint _program_pipeline[1]{};
 
   gl_utils::ShaderProgram _culling_task_shader;
   GLuint _uniform_disable_frustum_culling_loc;
@@ -84,8 +84,6 @@ class CullingMeshScene final : public SceneImpl
   GLuint _uniform_model_matrix_transpose_inverse;
 
   gl_utils::ShaderProgram _culling_fragment_shader;
-
-  std::vector<std::map<const char*, GLuint>> _resource_location_maps;
 };
 
 }  // namespace nell

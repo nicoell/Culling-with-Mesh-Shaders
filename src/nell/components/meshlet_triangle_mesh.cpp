@@ -7,52 +7,22 @@
 namespace nell::gpu
 {
 BoundingCone BoundingCone::GetApproximateReflexBoundingCone(
-    std::vector<VertexDescriptor *> &vertex_descriptors)
+    std::vector<glm::vec4 *> &normals)
 {
   glm::vec3 mean_normal{};
-  for (auto vertex_descriptor : vertex_descriptors)
+  for (auto normal : normals)
   {
-    mean_normal += vertex_descriptor->normal;
+    mean_normal += glm::vec3(*normal);
   }
-  // mean_normal /= vertex_descriptors.size();
   mean_normal = glm::normalize(mean_normal);
 
-  auto length = glm::length((mean_normal));
-  /*
-  float max_distance = 0.0f;
-  for (auto vertex_descriptor : vertex_descriptors)
-  {
-    max_distance = glm::max(
-        max_distance, glm::distance(mean_normal, vertex_descriptor->normal));
-  }
-
-  // Convert euclidean distance to spherical distance
-  // This is equal to acos(dot(mean_normal, max_distance_vector)) for unit
-  // vectors
-  float angular_span = 2.0f * glm::asin(0.5f * max_distance);*/
-
   float angular_span = 0.0f;
-  for (auto vertex_descriptor : vertex_descriptors)
+  for (auto normal : normals)
   {
     angular_span =
         glm::max(angular_span,
-                 glm::acos(glm::dot(mean_normal, vertex_descriptor->normal)));
+                 glm::acos(glm::dot(mean_normal, glm::vec3(*normal))));
   }
-
-  // Test correctness
-  /*
-  float mean_dotp = 0;
-  for (auto vertex_descriptor : vertex_descriptors)
-  {
-    float dotp = glm::dot(mean_normal, vertex_descriptor->normal);
-    float testcos = glm::cos(glm::min(angular_span, glm::half_pi<float>()));
-    mean_dotp += dotp;
-    if (testcos - dotp > 0.01f)
-    {
-      spdlog::error("Vertex Normal is outside bounding cone");
-    }
-  }
-  mean_dotp /= vertex_descriptors.size();*/
 
   BoundingCone cone{.normal = mean_normal, .angle = angular_span};
   return cone;
@@ -62,15 +32,14 @@ BoundingCone BoundingCone::GetApproximateReflexBoundingCone(
 namespace nell::comp
 {
 AxisAlignedBoundingBox::AxisAlignedBoundingBox(
-    std::vector<gpu::VertexDescriptor *> &vertex_descriptors)
+    std::vector<glm::vec4 *> &vertices)
 {
-  _min = vertex_descriptors[0]->position;
+  _min = *vertices[0];
   _max = _min;
-  for (auto vertex_descriptor : vertex_descriptors)
+  for (auto vertex : vertices)
   {
-    const auto position = vertex_descriptor->position;
-    _min = glm::min(_min, position);
-    _max = glm::max(_max, position);
+    _min = glm::min(_min, glm::vec3(*vertex));
+    _max = glm::max(_max, glm::vec3(*vertex));
   }
   _extents = (_max - _min) / 2.f;
   _center = _min + _extents;
@@ -79,15 +48,15 @@ AxisAlignedBoundingBox::AxisAlignedBoundingBox(
 MeshletTriangleMesh::MeshletTriangleMesh(aiMesh *ai_mesh)
 {
   const auto vertex_count = ai_mesh->mNumVertices;
-  vertex_descriptors.reserve(vertex_count);
+  vertices.reserve(vertex_count);
+  normals.reserve(vertex_count);
   for (unsigned i_vert = 0; i_vert < vertex_count; i_vert++)
   {
     aiVector3D ai_pos = ai_mesh->mVertices[i_vert];
     aiVector3D ai_normal = ai_mesh->mNormals[i_vert];
 
-    vertex_descriptors.push_back(gpu::VertexDescriptor{
-        .position = glm::vec3(ai_pos.x, ai_pos.y, ai_pos.z),
-        .normal = glm::vec3(ai_normal.x, ai_normal.y, ai_normal.z)});
+    vertices.emplace_back(ai_pos.x, ai_pos.y, ai_pos.z, 1);
+    normals.emplace_back(ai_normal.x, ai_normal.y, ai_normal.z, 0);
   }
 
   // Iterate Meshlets
@@ -102,17 +71,22 @@ MeshletTriangleMesh::MeshletTriangleMesh(aiMesh *ai_mesh)
   auto i_face_from = 0u;
   const auto face_count = ai_mesh->mNumFaces;
 
-  std::map<unsigned, gpu::VertexDescriptor *> meshlet_vertex_descriptor_map;
-  std::vector<gpu::VertexDescriptor *> meshlet_vertex_descriptors;
+  std::map<unsigned, bool> unique_index_map;
+  std::vector<glm::vec4 *> meshlet_vertices;
+  std::vector<glm::vec4 *> meshlet_normals;
 
   for (unsigned i_meshlet = 0; i_meshlet < meshlet_count; ++i_meshlet)
   {
     const auto i_face_to =
         glm::min(i_face_from + _meshlet_primitive_count, face_count);
     GLushort primitive_count = i_face_to - i_face_from;
-    meshlet_vertex_descriptor_map.clear();
-    meshlet_vertex_descriptors.clear();
-    meshlet_vertex_descriptors.reserve(max_indices_count);
+    unique_index_map.clear();
+
+    meshlet_vertices.clear();
+    meshlet_vertices.reserve(max_indices_count);
+
+    meshlet_normals.clear();
+    meshlet_normals.reserve(max_indices_count);
 
     // Iterate primitives of this meshlet
     for (unsigned i_face = i_face_from; i_face < i_face_to; ++i_face)
@@ -123,35 +97,35 @@ MeshletTriangleMesh::MeshletTriangleMesh(aiMesh *ai_mesh)
         unsigned index = ai_face.mIndices[i_indx];
         indices.push_back(index);
 
-        gpu::VertexDescriptor *vertex_descriptor =
-            &vertex_descriptors.at(index);
-
-        // Build vertex descriptor map with unique vertices
-        if (meshlet_vertex_descriptor_map
-                .insert(std::make_pair(index, vertex_descriptor))
+        // Add to map to test if index already present
+        if (unique_index_map
+                .insert(std::make_pair(index, true))
                 .second)
         {
-          // And vector, too
-          meshlet_vertex_descriptors.push_back(vertex_descriptor);
+          auto *vertex = &vertices.at(index);
+          auto *normal = &normals.at(index);
+
+          meshlet_vertices.push_back(vertex);
+          meshlet_normals.push_back(normal);
         }
       }
     }
 
-    auto aabb = AxisAlignedBoundingBox(meshlet_vertex_descriptors);
+    auto aabb = AxisAlignedBoundingBox(meshlet_vertices);
     gpu::BoundingSphere bounding_sphere{
         .center = aabb.getCenter(), .radius = [&]() -> float {
           float radius = 0.f;
-          for (auto vertex_descriptor : meshlet_vertex_descriptors)
+          for (auto vertex : meshlet_vertices)
           {
             radius =
                 glm::max(radius, glm::distance(bounding_sphere.center,
-                                               vertex_descriptor->position));
+                                               glm::vec3(*vertex)));
           }
           return radius;
         }()};
     gpu::BoundingCone bounding_cone =
         gpu::BoundingCone::GetApproximateReflexBoundingCone(
-            meshlet_vertex_descriptors);
+            meshlet_normals);
 
     meshlet_descriptors.push_back(
         gpu::MeshletDescriptor{.sphere = bounding_sphere,
@@ -166,8 +140,10 @@ void MeshletTriangleMesh::drawImGui()
 {
   if (ImGui::TreeNode("Meshlet Triangle Mesh"))
   {
-    ImGui::Text("%s: %d", "vertex_descriptors", vertex_descriptors.size());
     ImGui::Text("%s: %d", "meshlet_descriptors", meshlet_descriptors.size());
+
+    ImGui::Text("%s: %d", "vertices", vertices.size());
+    ImGui::Text("%s: %d", "normals", normals.size());
     ImGui::Text("%s: %d", "Indices", indices.size());
     ImGui::TreePop();
   }

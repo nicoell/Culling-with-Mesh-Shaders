@@ -10,11 +10,6 @@
 
 namespace nell::gpu
 {
-struct VertexDescriptor
-{
-  alignas(16) glm::vec3 position;
-  alignas(16) glm::vec3 normal;
-};
 
 struct BoundingSphere
 {
@@ -28,7 +23,7 @@ struct BoundingCone
   alignas(4) float angle;
 
   static BoundingCone GetApproximateReflexBoundingCone(
-      std::vector<VertexDescriptor *> &vertex_descriptors);
+      std::vector<glm::vec4 *> &normals);
 };
 
 struct MeshletDescriptor
@@ -45,7 +40,7 @@ class AxisAlignedBoundingBox
 {
  public:
   explicit AxisAlignedBoundingBox(
-      std::vector<gpu::VertexDescriptor *> &vertex_descriptors);
+      std::vector<glm::vec4 *> &vertices);
   const glm::vec3 &getCenter() const { return _center; };
   const glm::vec3 &getExtents() const { return _extents; };
   const glm::vec3 &getMin() const { return _min; };
@@ -63,19 +58,28 @@ struct MeshletTriangleMesh final : Mesh<MeshletTriangleMesh>, UiDrawable
 {
   explicit MeshletTriangleMesh(aiMesh *ai_mesh);
 
-  std::vector<gpu::VertexDescriptor> vertex_descriptors;
   std::vector<gpu::MeshletDescriptor> meshlet_descriptors;
+  std::vector<glm::vec4> vertices;
+  std::vector<glm::vec4> normals;
   std::vector<GLuint> indices;
 
-  size_t getVertexDescriptorSize() const
-  {
-    return vertex_descriptors.size() * sizeof(gpu::VertexDescriptor);
-  }
+  size_t getVerticesSize() const { return vertices.size() * sizeof(glm::vec4); }
+  size_t getNormalsSize() const { return normals.size() * sizeof(glm::vec4); }
   size_t getMeshletDescriptorSize() const
   {
     return meshlet_descriptors.size() * sizeof(gpu::MeshletDescriptor);
   }
   size_t getIndicesSize() const { return indices.size() * sizeof(GLuint); }
+
+  static size_t getVertexSizeT() { return sizeof(glm::vec4); }
+  static size_t getNormalSizeT() { return sizeof(glm::vec4); }
+  static size_t getIndexSizeT() { return sizeof(GLuint); }
+  
+  static GLint getVertexSize() { return 4; }
+  static GLint getNormalSize() { return 4; }
+
+  static GLenum getVertexType() { return GL_FLOAT; }
+  static GLenum getNormalType() { return GL_FLOAT; }
 
   void drawImGui() override;
   static unsigned getImportFlags()

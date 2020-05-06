@@ -3,8 +3,11 @@ This project studies the possibilites and challenges of NVIDIA Mesh Shaders. Wit
 
 A personal secondary purpose of the project was to implement a C++ framework from ground up using Entity Component System. The [EnTT library](https://github.com/skypjack/entt) was used for this.
 
+The 3D Models are from the Stanford 3D Scanning Repository:
+http://graphics.stanford.edu/data/3Dscanrep/
+
 ## Video Analysis
-[![Video coming soon](http://img.youtube.com/vi/TODO/0.jpg)](http://www.google.com)
+[![YouTube: Culling with NVIDIA Mesh Shaders - An introduction and performance comparison](http://img.youtube.com/vi/lijo-UqZu4Q/0.jpg)](https://www.youtube.com/watch?v=lijo-UqZu4Q)
 
 ## List of Dependendies
 * Assimp (5.0.1)
@@ -14,7 +17,7 @@ A personal secondary purpose of the project was to implement a C++ framework fro
 * Glad (0.1.33)
 * GLFW3 (3.3.2)
 
-## Point of Interests
+## Points of Interest
 * OpenGL Shader and Buffer Setup
 
    [See different Test Scenes](../../tree/master/src/nell/scenes)
@@ -29,3 +32,4 @@ A personal secondary purpose of the project was to implement a C++ framework fro
 * Shaders
 
    [See Resources/Shaders/](../../tree/master/resources/shaders)
+
